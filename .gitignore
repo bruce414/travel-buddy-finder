@@ -1,0 +1,35 @@
+## Build artifacts
+bin/
+obj/
+out/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## VS Code
+.vscode/
+
+## Rider
+.idea/
+
+## ASP.NET
+appsettings.*.json
+!appsettings.json        # Keep the base one if needed
+
+## Environment variables
+.env
+
+## Logs
+*.log
+
+## OS generated
+.DS_Store
+Thumbs.db
+
+bin/
+obj/
+**/bin/
+**/obj/
