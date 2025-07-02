@@ -33,3 +33,4 @@ bin/
 obj/
 **/bin/
 **/obj/
+**/net8.0/
