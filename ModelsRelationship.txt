@@ -1,0 +1,14 @@
+Models: User, Trip, TripMember, Message, Friendship
+
+1. Each user can add multiple friends, and that friend can add multiple friends, including the user. This forms a self-referncing
+many to many relationship between User and Friendship.
+
+2. Each user can register / organize many trips, and each trip can have many trip members (users). This forms a many to many relationship
+between User and Trip. But since the I want the joined table to have extra fields, I need a seperate model called TripMember for that.
+
+3. Each user can have many hobbies, and each hobby tag can belong to many users. This forms another classic many to many relationship
+between User and Hobby. But since this joined table does not need any extra fields, and .NET auto handles and generates a seperate
+joined model behind the scene, so no joined model needs to be created explicitly. 
+
+4. Each user can send many messages, but each message can only belong to one user. Thus, the relationship from User to Message is one
+to many, the relationship from Message to User is many to one.
