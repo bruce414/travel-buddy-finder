@@ -7,7 +7,8 @@ public class Hobby
 {
     public int HobbyId { get; set; }
 
-    public string HobbyContents { get; set; } = null!;
+    public string Description { get; set; } = null!;
 
+    //Navigation property
     public ICollection<User> RelatedUsers { get; set; } = new List<User>();
 }

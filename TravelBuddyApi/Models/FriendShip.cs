@@ -5,15 +5,20 @@ using System.Collections;
 
 public enum FriendshipStatus {Accepted, Declined, Pending}
 
-public class FriendShip
+public class Friendship
 {
+    //FK
     public int UserId { get; set; }
+    //Navigation property
     public User User { get; set; } = null!;
 
+    //FK
     public int FriendId { get; set; }
+    //Navigation property
     public User Friend { get; set; } = null!;
 
     public DateTime RequestedAt { get; set; } = DateTime.UtcNow;
     public DateTime BecameAt { get; set; } = DateTime.UtcNow;
-    public FriendshipStatus FriendShipStatus { get; set; } = FriendshipStatus.Pending;
+    //set the default friendship status to pending
+    public FriendshipStatus FriendshipStatus { get; set; } = FriendshipStatus.Pending;
 }

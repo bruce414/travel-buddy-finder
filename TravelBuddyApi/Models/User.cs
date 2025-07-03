@@ -3,6 +3,7 @@ namespace TravelBuddyApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class User
 {
@@ -10,29 +11,30 @@ public class User
 
     [Required]
     [MaxLength(100)]
-    required public string Name { get; set; }
+    public required string Name { get; set; }
 
     [Required]
     [MaxLength(100)]
-    required public string UserName { get; set; }
+    public required string UserName { get; set; }
 
     [Required]
-    required public DateTime DateOfBirth { get; set; }
+    public required DateTime DateOfBirth { get; set; }
 
     [Required]
-    required public string Gender { get; set; }
+    public required string Gender { get; set; }
 
     [Required]
-    required public string Nationality { get; set; }
+    public required string Nationality { get; set; }
 
     [Required]
-    required public string EmailAddress { get; set; }
+    public required string EmailAddress { get; set; }
 
     [Required]
-    required public string PasswordHash { get; set; }
+    [MaxLength(512)]
+    public required string PasswordHash { get; set; }
 
     [MaxLength(500)]
-    required public string ProfileInfo { get; set; }
+    public string ProfileInfo { get; set; } = "";
 
     public string? ProfileImageUrl { get; set; }
 
@@ -42,17 +44,23 @@ public class User
     //Specify the time that the user has updated his profile at
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+    /*Navigation properties*/
     public ICollection<Hobby> Hobbies { get; set; } = new List<Hobby>();
 
-    public ICollection<TripMember> UpcomingTrips { get; set; } = new List<TripMember>();
+    public ICollection<TripMember> TripCollections { get; set; } = new List<TripMember>();
 
-    public ICollection<TripMember> PastTrips { get; set; } = new List<TripMember>();
+    [NotMapped]
+    public IEnumerable<TripMember> UpcomingTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Upcoming);
 
-    public ICollection<TripMember> JoinedTrips { get; set; } = new List<TripMember>();
+    [NotMapped]
+    public IEnumerable<TripMember> CurrentTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.InProgress);
 
-    public ICollection<FriendShip> SentFriendRequests { get; set; } = new List<FriendShip>();
+    [NotMapped]
+    public IEnumerable<TripMember> PastTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Past);
 
-    public ICollection<FriendShip> ReceivedFriendRequests { get; set; } = new List<FriendShip>();
+    public ICollection<Friendship> SentFriendRequests { get; set; } = new List<Friendship>();
+
+    public ICollection<Friendship> ReceivedFriendRequests { get; set; } = new List<Friendship>();
 
     public ICollection<Message> SentMessages { get; set; } = new List<Message>();
 
