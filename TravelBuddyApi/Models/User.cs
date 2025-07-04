@@ -45,6 +45,8 @@ public class User
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     /*Navigation properties*/
+
+    //Helps to form a many to many relationship with Hobby
     public ICollection<Hobby> Hobbies { get; set; } = new List<Hobby>();
 
     public ICollection<TripMember> TripCollections { get; set; } = new List<TripMember>();

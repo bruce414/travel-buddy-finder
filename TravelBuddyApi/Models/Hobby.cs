@@ -9,6 +9,11 @@ public class Hobby
 
     public string Description { get; set; } = null!;
 
-    //Navigation property
+    public int UserId { get; set; }
+
+    /*Despite being a many to many relationship with User, the reason that Hobby model doesn't require a FK is because FK
+    exists inside the implicit joined table between User and Hobby, which is automatically handled by EF core*/
+
+    //Navigation property - which helps form the many to many relationship with User
     public ICollection<User> RelatedUsers { get; set; } = new List<User>();
 }
