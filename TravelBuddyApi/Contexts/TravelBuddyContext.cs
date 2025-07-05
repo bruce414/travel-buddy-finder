@@ -1,3 +1,5 @@
+namespace TravelBuddyApi.Contexts;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Models;

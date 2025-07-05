@@ -1,11 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using TravelBuddyApi.Models;
+using TravelBuddyApi.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<TravelBuddyContext>(options =>
+    options.UseInMemoryDatabase("TravelBuddyTestDb"));
+
+//Azure Database Connection
+/*
+builder.Services.AddDbContext<TravelBuddyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+*/
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
