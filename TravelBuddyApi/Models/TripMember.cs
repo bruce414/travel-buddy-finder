@@ -9,12 +9,12 @@ public enum TripStatus {Upcoming, InProgress, Past, Cancelled};
 public class TripMember
 {
     //FK
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     //Navigation property
     public User User { get; set; } = null!;
 
     //FK
-    public int TripId { get; set; }
+    public long TripId { get; set; }
     //Navigation property
     public Trip Trip { get; set; } = null!;
 

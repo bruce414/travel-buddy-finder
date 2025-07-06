@@ -5,11 +5,9 @@ using System.Collections;
 
 public class Hobby
 {
-    public int HobbyId { get; set; }
+    public long HobbyId { get; set; }
 
     public string Description { get; set; } = null!;
-
-    public int UserId { get; set; }
 
     /*Despite being a many to many relationship with User, the reason that Hobby model doesn't require a FK is because FK
     exists inside the implicit joined table between User and Hobby, which is automatically handled by EF core*/

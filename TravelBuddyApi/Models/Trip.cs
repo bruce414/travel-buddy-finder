@@ -5,7 +5,7 @@ using System.Collections;
 
 public class Trip
 {
-    public int TripId { get; set; }
+    public long TripId { get; set; }
 
     public required string Title { get; set; }
 
@@ -25,7 +25,7 @@ public class Trip
     public bool IsLookingForBuddies { get; set; } = true;
 
     /*FK -> Navigate to the trip organizer, pairs with TripOrganizer*/
-    public int TripOrganizerId { get; set; }
+    public long TripOrganizerId { get; set; }
 
     //Navigation properties
     public User TripOrganizer { get; set; } = null!;
