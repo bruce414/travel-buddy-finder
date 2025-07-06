@@ -8,12 +8,12 @@ public enum FriendshipStatus {Accepted, Declined, Pending}
 public class Friendship
 {
     //FK
-    public int UserId { get; set; }
+    public long UserId { get; set; }
     //Navigation property
     public User User { get; set; } = null!;
 
     //FK
-    public int FriendId { get; set; }
+    public long FriendId { get; set; }
     //Navigation property
     public User Friend { get; set; } = null!;
 
