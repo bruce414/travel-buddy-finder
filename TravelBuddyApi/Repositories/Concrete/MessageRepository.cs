@@ -15,4 +15,9 @@ public class MessageRepository(TravelBuddyContext _travelBuddyContext)
     {
         return await _travelBuddyContext.Messages.FindAsync(messageId);
     }
+
+    public async Task<bool> MessageExistsAsync(long messageId)
+    {
+        return await _travelBuddyContext.Messages.AnyAsync(m => m.MessageId == messageId);
+    }
 }

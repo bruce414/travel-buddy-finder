@@ -6,4 +6,5 @@ public interface IMessageRepository
 {
     Task<IList<Message>> GetAllMessagesAsync();
     Task<Message> GetMessageByIdAsync(long messageId);
+    Task<bool> MessageExistsAsync(long messageId);
 }
