@@ -3,6 +3,8 @@ namespace TravelBuddyApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Collections;
 
+public enum TripStatus {Upcoming, InProgress, Past, Cancelled};
+
 public class Trip
 {
     public long TripId { get; set; }
@@ -18,6 +20,8 @@ public class Trip
     public DateTime EndDate { get; set; }
 
     public float? AveragePricePerPerson { get; set; }
+
+    public TripStatus TripStatus { get; set; } = TripStatus.Upcoming;
 
     public string? Description { get; set; }
 

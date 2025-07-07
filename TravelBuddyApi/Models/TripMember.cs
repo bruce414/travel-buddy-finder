@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections;
 
 public enum Role {Creator, Member, Pending};
-public enum TripStatus {Upcoming, InProgress, Past, Cancelled};
 
 public class TripMember
 {
@@ -21,5 +20,4 @@ public class TripMember
     //set the default trip role to pending
     public Role TripRole { get; set; } = Role.Pending;
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
-    public TripStatus TripStatus { get; set; } = TripStatus.Upcoming;
 }

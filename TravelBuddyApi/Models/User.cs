@@ -51,14 +51,14 @@ public class User
 
     public ICollection<TripMember> TripCollections { get; set; } = new List<TripMember>();
 
-    [NotMapped]
-    public IEnumerable<TripMember> UpcomingTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Upcoming);
+    // [NotMapped]
+    // public IEnumerable<TripMember> UpcomingTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Upcoming);
 
-    [NotMapped]
-    public IEnumerable<TripMember> CurrentTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.InProgress);
+    // [NotMapped]
+    // public IEnumerable<TripMember> CurrentTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.InProgress);
 
-    [NotMapped]
-    public IEnumerable<TripMember> PastTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Past);
+    // [NotMapped]
+    // public IEnumerable<TripMember> PastTrips => TripCollections.Where(tm => tm.TripStatus == TripStatus.Past);
 
     public ICollection<Friendship> SentFriendRequests { get; set; } = new List<Friendship>();
 
