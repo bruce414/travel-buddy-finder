@@ -1,8 +1,10 @@
 namespace TravelBuddyApi.Repositories.Concrete;
 
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 
 public class TripRepository(TravelBuddyContext _travelBuddyContext)
 {
@@ -16,28 +18,37 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
         return await _travelBuddyContext.Trips.FindAsync(id);
     }
 
-    public async Task<List<Trip>> GetTripsByDestinationAsync(string destination)
+    //Filtering trips based on users selections
+    public async Task<List<Trip>> GetFilteredTripsAsync(TripFilter tripFilter)
     {
-        List<Trip> trips = await _travelBuddyContext.Trips.Where(t => t.Destination == destination).ToListAsync();
-        return trips;
-    }
+        var tripQuery = _travelBuddyContext.Trips.AsQueryable();
 
-    public async Task<List<Trip>> GetTripsByStartDateAsync(DateTime startDate)
-    {
-        List<Trip> trips = await _travelBuddyContext.Trips.Where(t => t.StartDate == startDate).ToListAsync();
-        return trips;
-    }
+        if (!string.IsNullOrWhiteSpace(tripFilter.Destination))
+        {
+            tripQuery = tripQuery.Where(t => t.Destination == tripFilter.Destination);
+        }
 
-    public async Task<List<Trip>> GetTripsByEndDateAsync(DateTime endDate)
-    {
-        List<Trip> trips = await _travelBuddyContext.Trips.Where(t => t.EndDate == endDate).ToListAsync();
-        return trips;
-    }
+        if (tripFilter.StartDate.HasValue)
+        {
+            tripQuery = tripQuery.Where(t => t.StartDate == tripFilter.StartDate);
+        }
 
-    public async Task<List<Trip>> GetTripsByBothDatesAsync(DateTime startDate, DateTime endDate)
-    {
-        List<Trip> trips = await _travelBuddyContext.Trips.Where(t => t.StartDate == startDate && t.EndDate == endDate).ToListAsync();
-        return trips;
+        if (tripFilter.EndDate.HasValue)
+        {
+            tripQuery = tripQuery.Where(t => t.EndDate == tripFilter.EndDate);
+        }
+
+        if (tripFilter.IsActivelylookingForBuddies.HasValue)
+        {
+            tripQuery = tripQuery.Where(t => t.IsLookingForBuddies == tripFilter.IsActivelylookingForBuddies);
+        }
+
+        if (tripFilter.AveragePricePerPerson.HasValue)
+        {
+            tripQuery = tripQuery.Where(t => t.AveragePricePerPerson == tripFilter.AveragePricePerPerson);
+        }
+
+        return await tripQuery.ToListAsync();
     }
 
     public async Task AddTripAsync(Trip trip)
@@ -60,6 +71,13 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
             _travelBuddyContext.Remove(TripToBeRemoved);
             await _travelBuddyContext.SaveChangesAsync();
         }
+    }
+
+    public async Task<int> CurrentNumberOfMembers(int tripId)
+    {
+        Trip? trip = await _travelBuddyContext.Trips.Include(t => t.Members).FirstOrDefaultAsync(tr => tr.TripId == tripId);
+        int memberCount = trip?.Members.Count ?? 0;
+        return memberCount;
     }
 
     public async Task<bool> TripExistsAsync(long id)
