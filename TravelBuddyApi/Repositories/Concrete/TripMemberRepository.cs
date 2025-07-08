@@ -22,6 +22,14 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .FirstOrDefaultAsync();
     }
 
+    public async Task<List<Trip>> GetTripsByUserIdAsync(long userId)
+    {
+        return await _travelBuddyContext.TripMembers
+                .Where(tm => tm.UserId == userId)
+                .Select(tm => tm.Trip)
+                .ToListAsync();
+    }
+
     public async Task<List<Trip>> GetPastTripsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.TripMembers
