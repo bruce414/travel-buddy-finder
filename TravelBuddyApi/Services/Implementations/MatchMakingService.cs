@@ -1,7 +1,8 @@
-namespace TravelBuddyApi.Repositories.Concrete;
+namespace TravelBuddyApi.Services.Implementations;
 
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Concrete;
 using Microsoft.EntityFrameworkCore;
 
 //Can be simplified
