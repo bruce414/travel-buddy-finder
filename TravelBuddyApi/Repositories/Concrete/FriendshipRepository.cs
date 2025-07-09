@@ -6,7 +6,7 @@ namespace TravelBuddyApi.Repositories.Concrete;
 
 public class FriendshipRepository(TravelBuddyContext _travelBuddyContext)
 {
-    public async Task<List<Friendship>> GetFriendsByUserId(long userId)
+    public async Task<List<Friendship>> GetFriendsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.Friendships
                 .Where(u => u.UserId == userId)
