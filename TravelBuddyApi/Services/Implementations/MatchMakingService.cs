@@ -6,32 +6,23 @@ using TravelBuddyApi.Repositories.Concrete;
 using Microsoft.EntityFrameworkCore;
 
 //Can be simplified
-public class MatchMakingRepository(TravelBuddyContext _travelBuddyContext, UserRepository _userRepository, TripMemberRepository _tripMemberRepository)
+public class MatchMakingService(UserRepository _userRepository, TripMemberRepository _tripMemberRepository)
 {
     public async Task<IEnumerable<MatchMaking>> GetUsersByRecommendationAsync(long userId)
     {
         //Default filtering factor is hobbies
-        User? currentUser = await _travelBuddyContext.Users
-                .Where(u => u.UserId == userId)
-                .Include(u => u.Hobbies)
-                .FirstOrDefaultAsync();
+        User? currentUser = await _userRepository.GetUserWithHobbies(userId);
 
         if (currentUser == null)
         {
             return [];
         }
 
-        var currentUserHobbyIds = await _travelBuddyContext.Users
-                .Where(u => u.UserId == userId)
-                .SelectMany(u => u.Hobbies.Select(h => h.HobbyId))
-                .ToListAsync();
+        var currentUserHobbyIds = await _userRepository.GetUserHobbyIds(userId);
 
         var retrieveCurrentUserAllTrips = await _tripMemberRepository.GetTripsByUserIdAsync(userId);
 
-        IEnumerable<User?> otherUsers = await _travelBuddyContext.Users
-                .Where(otu => otu.UserId != userId && otu.Hobbies.Any(h => currentUserHobbyIds.Contains(h.HobbyId))).Take(100) //To limit the number of users being extracted from the db
-                .Include(otu => otu.Hobbies)
-                .ToListAsync();
+        IEnumerable<User?> otherUsers = await _userRepository.GetAllOtherUsersWithAtLeastOneSameHobby(userId);
 
         if (otherUsers == Enumerable.Empty<User>())
         {
