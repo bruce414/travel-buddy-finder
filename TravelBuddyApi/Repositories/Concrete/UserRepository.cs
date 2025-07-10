@@ -53,5 +53,29 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
         return users;
     }
 
-    //Get users by hobbies
+    /*The following three mathods serve MatchMakingService.cs*/
+    public async Task<User?> GetUserWithHobbies(long userId)
+    {
+        return await _travelBuddyContext.Users
+                .Where(u => u.UserId == userId)
+                .Include(u => u.Hobbies)
+                .FirstOrDefaultAsync();
+    }
+
+    public async Task<IEnumerable<long>> GetUserHobbyIds(long userId)
+    {
+        return await _travelBuddyContext.Users
+                .Where(u => u.UserId == userId)
+                .SelectMany(u => u.Hobbies.Select(u => u.HobbyId))
+                .ToListAsync();
+    }
+
+    public async Task<IEnumerable<User>> GetAllOtherUsersWithAtLeastOneSameHobby(long userId)
+    {
+        return await _travelBuddyContext.Users
+                .Where(otu => otu.UserId != userId && otu.Hobbies
+                .Any(h => _travelBuddyContext.Users.Where(u => u.UserId == userId).SelectMany(u => u.Hobbies.Select(u => u.HobbyId)).Contains(h.HobbyId))).Take(100) //To limit the number of users being extracted from the db
+                .Include(otu => otu.Hobbies)
+                .ToListAsync();
+    }
 }
