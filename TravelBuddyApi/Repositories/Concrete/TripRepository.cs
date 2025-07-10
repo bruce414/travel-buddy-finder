@@ -18,7 +18,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
         return await _travelBuddyContext.Trips.FindAsync(id);
     }
 
-    //Filtering trips based on users selections
+    //Filtering trips based on users selections for ***search query***
     public async Task<List<Trip>> GetFilteredTripsAsync(TripFilter tripFilter)
     {
         var tripQuery = _travelBuddyContext.Trips.AsQueryable();
@@ -49,6 +49,38 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
         }
 
         return await tripQuery.ToListAsync();
+    }
+
+    public async Task<IEnumerable<Trip>> GetUserUpcomingTripsAsync(long userId)
+    {
+        return await _travelBuddyContext.Trips
+                .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Upcoming)
+                .Include(t => t.TripOrganizerId)
+                .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Trip>> GetUserInProgressTripsAsync(long userId)
+    {
+        return await _travelBuddyContext.Trips
+                .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.InProgress)
+                .Include(t => t.TripOrganizerId)
+                .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Trip>> GetUserPastTripsAsync(long userId)
+    {
+        return await _travelBuddyContext.Trips
+                .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Past)
+                .Include(t => t.TripOrganizerId)
+                .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Trip>> GetUserCancelledTripsAsync(long userId)
+    {
+        return await _travelBuddyContext.Trips
+                .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Cancelled)
+                .Include(t => t.TripOrganizerId)
+                .ToListAsync();
     }
 
     public async Task AddTripAsync(Trip trip)
