@@ -11,7 +11,11 @@ public class User
 
     [Required]
     [MaxLength(100)]
-    public required string Name { get; set; }
+    public required string FirstName { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    public required string LastName { get; set; }
 
     [Required]
     [MaxLength(100)]
