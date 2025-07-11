@@ -18,6 +18,6 @@ public class TripMember
     public Trip Trip { get; set; } = null!;
 
     //set the default trip role to pending
-    public Role TripRole { get; set; } = Role.Pending;
+    public Role MemberStatus { get; set; } = Role.Pending;
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 }
