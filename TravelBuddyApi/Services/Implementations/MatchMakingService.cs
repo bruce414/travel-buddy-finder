@@ -6,7 +6,7 @@ using TravelBuddyApi.Repositories.Concrete;
 using Microsoft.EntityFrameworkCore;
 
 //Can be simplified
-public class MatchMakingService(UserRepository _userRepository, TripRepository _tripRepository, TripMemberRepository _tripMemberRepository)
+public class MatchMakingService(UserRepository _userRepository, TripMemberRepository _tripMemberRepository)
 {
     public async Task<IEnumerable<MatchMaking>> GetUsersByRecommendationAsync(long userId)
     {
