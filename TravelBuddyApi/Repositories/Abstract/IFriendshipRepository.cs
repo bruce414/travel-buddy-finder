@@ -4,6 +4,13 @@ namespace TravelBuddyApi.Repositories.Abstract;
 
 public interface IFriendshipRepository
 {
-    Task<List<Friendship>> GetFriendsByUserIdAsync(long userId);
-    Task<List<Friendship>> GetFriendsByFriendshipStatusAsync(long userId, FriendshipStatus friendshipStatus);
+    Task<IEnumerable<Friendship>> GetFriendsByUserIdAsync(long userId);
+    Task<IEnumerable<Friendship>> GetFriendsByFriendshipStatusAsync(long userId, FriendshipStatus friendshipStatus);
+    Task<IEnumerable<Friendship>> GetPendingSentRequestsAsync(long userId);
+    Task<IEnumerable<Friendship>> GetPendingReceivedRequestsAsync(long friendId);
+    Task AddFriendRequestAsync(Friendship friendship);
+    Task UpdateFriendshipAsync(Friendship friendship);
+    Task RemoveFriendAsync(Friendship friendship);
+    // Task SentFriendRequest(long fromUserId, long toUserId);
+    Task<Friendship> GetFriendshipAsync(long userId, long targetUserId);
 }
