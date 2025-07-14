@@ -49,7 +49,8 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
     public async Task<List<User>> SortUsersByName()
     {
         List<User> users = await _travelBuddyContext.Users.ToListAsync();
-        users.Sort((a, b) => a.Name.CompareTo(b.Name));
+        users.Sort((a, b) => string.Concat(a.FirstName, " ", a.LastName)
+              .CompareTo(string.Concat(b.FirstName, " ", b.LastName)));
         return users;
     }
 
