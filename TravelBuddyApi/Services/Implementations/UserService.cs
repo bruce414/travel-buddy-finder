@@ -7,16 +7,37 @@ namespace TravelBuddyApi.Services.Implementations;
 
 public class UserService(IUserRepository _userRepository)
 {
+    public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
+    {
+        var getUsers = await _userRepository.GetAllUsersAsync();
+
+        var result = getUsers.Select(au => new UserResponseDTO
+        {
+            UserId = au.UserId,
+            FirstName = au.FirstName,
+            LastName = au.LastName,
+            UserName = au.UserName,
+            DateOfBirth = au.DateOfBirth,
+            Gender = au.Gender,
+            Nationality = au.Nationality,
+            EmailAddress = au.EmailAddress,
+            PasswordHash = au.PasswordHash,
+            ProfileInfo = au.ProfileInfo,
+            ProfileImageUrl = au.ProfileImageUrl
+        });
+        return result;
+    }
+
     public async Task<User> GetUserByIdAsync(long userId)
     {
         return await _userRepository.GetUserByIdAsync(userId);
     }
 
-    public async Task AddUserAsync(long userId, UserCreateDTO userCreateDTO)
+    public async Task AddUserAsync(UserCreateDTO userCreateDTO)
     {
         var newUser = new User
         {
-            UserId = userId,
+            UserId = userCreateDTO.UserId,
             FirstName = userCreateDTO.FirstName,
             LastName = userCreateDTO.LastName,
             UserName = userCreateDTO.UserName,

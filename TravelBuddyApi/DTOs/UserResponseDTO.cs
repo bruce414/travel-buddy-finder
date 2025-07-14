@@ -1,10 +1,11 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace TravelBuddyApi.DTOs;
 
-public class UserCreateDTO
+using System.ComponentModel.DataAnnotations;
+
+public class UserResponseDTO
 {
     public long UserId { get; set; }
+
     [Required(ErrorMessage = "User first name can't be null")]
     [MaxLength(100)]
     public string FirstName { get; set; } = string.Empty;
@@ -35,5 +36,5 @@ public class UserCreateDTO
     [MaxLength(500)]
     public string ProfileInfo { get; set; } = string.Empty;
 
-    public string ProfileImageUrl { get; set; } = string.Empty;
+    public string? ProfileImageUrl { get; set; } = string.Empty;
 }
