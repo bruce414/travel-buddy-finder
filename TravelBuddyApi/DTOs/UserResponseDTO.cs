@@ -1,6 +1,7 @@
 namespace TravelBuddyApi.DTOs;
 
 using System.ComponentModel.DataAnnotations;
+using TravelBuddyApi.Models;
 
 public class UserResponseDTO
 {
@@ -37,4 +38,6 @@ public class UserResponseDTO
     public string ProfileInfo { get; set; } = string.Empty;
 
     public string? ProfileImageUrl { get; set; } = string.Empty;
+
+    public IEnumerable<HobbyResponseDTO> Hobbies { get; set; } = [];
 }

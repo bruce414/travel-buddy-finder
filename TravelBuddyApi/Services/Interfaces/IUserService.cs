@@ -6,8 +6,10 @@ namespace TravelBuddyApi.Services.Interfaces;
 public interface IUserService
 {
     Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync();
+    Task<IEnumerable<UserResponseDTO>> GetUsersWithSpecificHobbies(IEnumerable<long> hobbyIds);
+    Task<IEnumerable<UserResponseDTO>> GetUsersWithSpecificTrips(IEnumerable<long> tripIds);
     Task<User> GetUserByIdAsync(long userId);
-    Task AddUserAsync(UserCreateDTO userCreateDTO);
-    Task UpdateUserAsync(User user, UserUpdateDTO userUpdateDTO);
-    Task RemoveUserAsync(long userId);
+    Task<UserResponseDTO> AddUserAsync(UserCreateDTO userCreateDTO);
+    Task<UserResponseDTO> UpdateUserAsync(long userId, UserUpdateDTO userUpdateDTO);
+    Task<bool> RemoveUserAsync(long userId);
 }

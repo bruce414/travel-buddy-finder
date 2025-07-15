@@ -54,6 +54,14 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
         return users;
     }
 
+    public async Task<IEnumerable<User>> GetUsersbyHobbyIdsAsync(IEnumerable<long> hobbyIds)
+    {
+        return await _travelBuddyContext.Users
+                .Where(u => u.Hobbies.Any(h => hobbyIds.Contains(h.HobbyId)))
+                .Include(h => h.Hobbies)
+                .ToListAsync();
+    }
+
     /*The following three mathods serve MatchMakingService.cs*/
     public async Task<User?> GetUserWithHobbies(long userId)
     {

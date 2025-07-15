@@ -6,6 +6,7 @@ public interface IUserRepository
 {
     Task<List<User>> GetAllUsersAsync();
     Task<User> GetUserByIdAsync(long id);
+    Task<IEnumerable<User>> GetUsersByHobbyIdsAsync(IEnumerable<long> hobbyIds);
     //Retrieve users with similar interests
     Task<User> GetUsersWithHobbiesAsync(long userId);
     Task<IEnumerable<long>> GetUserHobbyIdsAsync(long userId);
