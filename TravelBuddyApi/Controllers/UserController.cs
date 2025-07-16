@@ -29,7 +29,7 @@ public class UserController(IUserService _userService) : ControllerBase
 
     //Get by Id action
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUserById(long userId)
+    public async Task<IActionResult> GetUserByIdAsync(long userId)
     {
         try
         {
@@ -85,7 +85,7 @@ public class UserController(IUserService _userService) : ControllerBase
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(GetUserById), new { userId = createdUser.UserId }, createdUser);
+            return CreatedAtAction(nameof(GetUserByIdAsync), new { userId = createdUser.UserId }, createdUser);
         }
         catch (Exception)
         {
@@ -96,7 +96,7 @@ public class UserController(IUserService _userService) : ControllerBase
     }
 
     //Put: api/User/{id}
-    [HttpPut("{id}")]
+    [HttpPut("{userId}")]
     public async Task<IActionResult> UpdateUserAsync(long userId, [FromBody] UserUpdateDTO userUpdateDTO)
     {
         if (!ModelState.IsValid)
@@ -127,7 +127,7 @@ public class UserController(IUserService _userService) : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{userId}")]
     public async Task<IActionResult> RemoveUserAsync(long userId)
     {
         try

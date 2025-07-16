@@ -12,12 +12,51 @@ public class TripService(ITripRepository _tripRepository)
         return await _tripRepository.GetAllTripsAsync();
     }
 
-    public async Task<IEnumerable<Trip>> GetFilteredTripsAsync(TripFilter tripFilter)
+    public async Task<TripResponseDTO> GetTripById(long tripId)
     {
-        return await _tripRepository.GetFilteredTripsAsync(tripFilter);
+        var getTrip = await _tripRepository.GetTripByIdAsync(tripId);
+
+        if (getTrip == null)
+        {
+            throw new InvalidOperationException("The trip is not found"); 
+        }
+
+        TripResponseDTO trip = new TripResponseDTO
+        {
+            TripId = getTrip.TripId,
+            Title = getTrip.Destination,
+            Destination = getTrip.Destination,
+            StartDate = getTrip.StartDate,
+            EndDate = getTrip.EndDate,
+            AveragePricePerPerson = getTrip.AveragePricePerPerson,
+            Description = getTrip.Description,
+            TripImagesUrl = getTrip.TripImagesUrl,
+            IsLookingForBuddies = getTrip.IsLookingForBuddies
+        };
+        return trip;
     }
 
-    public async Task CreateTripAsync(long userId, TripCreateDTO tripCreateDTO)
+    public async Task<IEnumerable<TripResponseDTO>> GetFilteredTripsAsync(TripFilter tripFilter)
+    {
+        var getTrips = await _tripRepository.GetFilteredTripsAsync(tripFilter);
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            TripOrganizerId = t.TripOrganizerId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
+    }
+
+    public async Task<TripResponseDTO> CreateTripAsync(long userId, TripCreateDTO tripCreateDTO)
     {
         var newTrip = new Trip
         {
@@ -33,9 +72,22 @@ public class TripService(ITripRepository _tripRepository)
         };
 
         await _tripRepository.AddTripAsync(newTrip);
+
+        return new TripResponseDTO
+        {
+            TripId = newTrip.TripId,
+            Title = newTrip.Title,
+            Destination = newTrip.Description,
+            StartDate = newTrip.StartDate,
+            EndDate = newTrip.EndDate,
+            AveragePricePerPerson = newTrip.AveragePricePerPerson,
+            Description = newTrip.Description,
+            TripImagesUrl = newTrip.TripImagesUrl,
+            IsLookingForBuddies = tripCreateDTO.IsLookingForBuddies
+        };
     }
 
-    public async Task UpdateTripAsync(long userId, long tripId, TripUpdateDTO tripUpdateDTO)
+    public async Task<TripResponseDTO> UpdateTripAsync(long userId, long tripId, TripUpdateDTO tripUpdateDTO)
     {
         Trip existingTrip = await _tripRepository.GetTripByIdAsync(tripId);
         if (existingTrip == null)
@@ -46,7 +98,7 @@ public class TripService(ITripRepository _tripRepository)
         {
             throw new UnauthorizedAccessException("Only the trip admin can delete this trip");
         }
-        
+
         existingTrip.TripOrganizerId = userId;
         existingTrip.Title = tripUpdateDTO.Title;
         existingTrip.Destination = tripUpdateDTO.Destination;
@@ -58,39 +110,115 @@ public class TripService(ITripRepository _tripRepository)
         existingTrip.IsLookingForBuddies = tripUpdateDTO.IsLookingForBuddies;
 
         await _tripRepository.UpdateTripAsync(existingTrip);
+
+        return new TripResponseDTO
+        {
+            TripId = existingTrip.TripId,
+            TripOrganizerId = existingTrip.TripOrganizerId,
+            Title = existingTrip.Title,
+            Destination = existingTrip.Destination,
+            StartDate = existingTrip.StartDate,
+            EndDate = existingTrip.EndDate,
+            AveragePricePerPerson = existingTrip.AveragePricePerPerson,
+            Description = existingTrip.Description,
+            TripImagesUrl = existingTrip.TripImagesUrl,
+            IsLookingForBuddies = existingTrip.IsLookingForBuddies
+        };
     }
 
-    public async Task DeleteTripAsync(long userId, long tripId)
+    public async Task<bool> DeleteTripAsync(long userId, long tripId)
     {
         Trip trip = await _tripRepository.GetTripByIdAsync(tripId);
         if (trip == null)
         {
             throw new InvalidOperationException("The requested trip does not exist");
         }
+        //Only trip creator can delete a trip
         if (trip.TripOrganizerId != userId)
         {
             throw new UnauthorizedAccessException("Only the trip admin can delete this trip");
         }
         await _tripRepository.RemoveTripByIdAsync(tripId);
+        return true;
     }
 
-    public async Task<IEnumerable<Trip>> GetUserAllUpcomingTripsAsync(long userId)
+    public async Task<IEnumerable<TripResponseDTO>> GetUserAllUpcomingTripsAsync(long userId)
     {
-        return await _tripRepository.GetUserUpcomingTripsAsync(userId);
+        var getTrips = await _tripRepository.GetUserUpcomingTripsAsync(userId);
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            TripOrganizerId = t.TripOrganizerId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
     }
 
-    public async Task<IEnumerable<Trip>> GetUserAllInProgressTripsAsync(long userId)
+    public async Task<IEnumerable<TripResponseDTO>> GetUserAllInProgressTripsAsync(long userId)
     {
-        return await _tripRepository.GetUserInProgressTripsAsync(userId);
+        var getTrips = await _tripRepository.GetUserInProgressTripsAsync(userId);
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            TripOrganizerId = t.TripOrganizerId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
     }
 
-    public async Task<IEnumerable<Trip>> GetUserAllPastTripsAsync(long userId)
+    public async Task<IEnumerable<TripResponseDTO>> GetUserAllPastTripsAsync(long userId)
     {
-        return await _tripRepository.GetUserPastTripsAsync(userId);
+        var getTrips = await _tripRepository.GetUserPastTripsAsync(userId);
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            TripOrganizerId = t.TripOrganizerId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
     }
 
-    public async Task<IEnumerable<Trip>> GetUserAllCancelledTripsAsync(long userId)
+    public async Task<IEnumerable<TripResponseDTO>> GetUserAllCancelledTripsAsync(long userId)
     {
-        return await _tripRepository.GetUserCancelledTripsAsync(userId);
+        var getTrips = await _tripRepository.GetUserCancelledTripsAsync(userId);
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            TripOrganizerId = t.TripOrganizerId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
     }
 }

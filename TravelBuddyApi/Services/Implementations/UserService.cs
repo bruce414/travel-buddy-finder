@@ -58,9 +58,35 @@ public class UserService(IUserRepository _userRepository)
         return result;
     }
 
-    public async Task<User> GetUserByIdAsync(long userId)
+    public async Task<UserResponseDTO> GetUserByIdAsync(long userId)
     {
-        return await _userRepository.GetUserByIdAsync(userId);
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+
+        UserResponseDTO user = new UserResponseDTO
+        {
+            UserId = getUser.UserId,
+            FirstName = getUser.FirstName,
+            LastName = getUser.LastName,
+            UserName = getUser.UserName,
+            DateOfBirth = getUser.DateOfBirth,
+            Gender = getUser.Gender,
+            Nationality = getUser.Nationality,
+            EmailAddress = getUser.EmailAddress,
+            PasswordHash = getUser.PasswordHash,
+            ProfileInfo = getUser.ProfileInfo,
+            ProfileImageUrl = getUser.ProfileImageUrl,
+            Hobbies = getUser.Hobbies.Select(h => new HobbyResponseDTO
+            {
+                HobbyId = h.HobbyId,
+                Description = h.Description
+            })
+        };
+        return user;
     }
 
     public async Task<UserResponseDTO> AddUserAsync(UserCreateDTO userCreateDTO)
