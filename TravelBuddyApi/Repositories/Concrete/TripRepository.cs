@@ -55,7 +55,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
     {
         return await _travelBuddyContext.Trips
                 .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Upcoming)
-                .Include(t => t.TripOrganizerId)
+                .Include(t => t.TripOrganizer)
                 .ToListAsync();
     }
 
@@ -63,7 +63,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
     {
         return await _travelBuddyContext.Trips
                 .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.InProgress)
-                .Include(t => t.TripOrganizerId)
+                .Include(t => t.TripOrganizer)
                 .ToListAsync();
     }
 
@@ -71,7 +71,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
     {
         return await _travelBuddyContext.Trips
                 .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Past)
-                .Include(t => t.TripOrganizerId)
+                .Include(t => t.TripOrganizer)
                 .ToListAsync();
     }
 
@@ -79,7 +79,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
     {
         return await _travelBuddyContext.Trips
                 .Where(t => t.TripOrganizerId == userId && t.TripStatus == TripStatus.Cancelled)
-                .Include(t => t.TripOrganizerId)
+                .Include(t => t.TripOrganizer)
                 .ToListAsync();
     }
 

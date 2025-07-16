@@ -1,8 +1,8 @@
-using TravelBuddyApi.Models;
-
 namespace TravelBuddyApi.DTOs;
 
-public class TripMemberResponseDTO
+using TravelBuddyApi.Models;
+
+public class TripMemberCreateDTO
 {
     public long UserId { get; set; }
     public UserResponseDTO User { get; set; } = null!;

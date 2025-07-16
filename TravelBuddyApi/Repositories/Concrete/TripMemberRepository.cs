@@ -8,7 +8,7 @@ namespace TravelBuddyApi.Repositories.Concrete;
 
 public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
 {
-    public async Task<List<TripMember>> GetAllTripMembersAsync(long tripId)
+    public async Task<IEnumerable<TripMember>> GetAllTripMembersAsync(long tripId)
     {
         return await _travelBuddyContext.TripMembers
                 .Where(tm => tm.TripId == tripId)
@@ -24,7 +24,7 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .FirstOrDefaultAsync();
     }
 
-    public async Task<List<Trip>> GetTripsByUserIdAsync(long userId)
+    public async Task<IEnumerable<Trip>> GetTripsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.TripMembers
                 .Where(tm => tm.UserId == userId)
@@ -32,7 +32,7 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .ToListAsync();
     }
 
-    public async Task<List<Trip>> GetJoinedPastTripsByUserIdAsync(long userId)
+    public async Task<IEnumerable<Trip>> GetJoinedPastTripsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.TripMembers
                 .Where(tm => tm.UserId == userId && tm.Trip.TripStatus == TripStatus.Past)
@@ -41,7 +41,7 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .ToListAsync();
     }
 
-    public async Task<List<Trip>> GetJoinedOngoingTripsByUserIdAsync(long userId)
+    public async Task<IEnumerable<Trip>> GetJoinedOngoingTripsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.TripMembers
                 .Where(tm => tm.UserId == userId && tm.Trip.TripStatus == TripStatus.InProgress)
@@ -50,7 +50,7 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .ToListAsync();
     }
 
-    public async Task<List<Trip>> GetJoinedUpcomingTripsByUserIdAsync(long userId)
+    public async Task<IEnumerable<Trip>> GetJoinedUpcomingTripsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.TripMembers
                 .Where(tm => tm.UserId == userId && tm.Trip.TripStatus == TripStatus.Upcoming)
@@ -62,6 +62,12 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
     public async Task AddMemberAsync(TripMember tripMember)
     {
         _travelBuddyContext.TripMembers.Add(tripMember);
+        await _travelBuddyContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateMemberAsync(TripMember tripMember)
+    {
+        _travelBuddyContext.TripMembers.Update(tripMember);
         await _travelBuddyContext.SaveChangesAsync();
     }
 
@@ -91,6 +97,14 @@ public class TripMemberRepository(TravelBuddyContext _travelBuddyContext)
                 .Where(tm => tm.TripId == tripId)
                 .Include(t => t.User)
                 .ToListAsync();
+    }
+
+    public async Task<TripMember?> GetTripMemberAsync(long tripId, long userId)
+    {
+        return await _travelBuddyContext.TripMembers
+                .Where(tm => tm.TripId == tripId && tm.UserId == userId)
+                .Include(tm => tm.User)
+                .FirstOrDefaultAsync();
     }
         
 }
