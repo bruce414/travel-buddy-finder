@@ -45,7 +45,7 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         };
     }
 
-    public async Task<TripMemberResponseDTO> UpdateTripMemberAsync(long userId, long tripId, TripMemberUpdateDTO tripMemberUpdateDTO)
+    public async Task<TripMemberResponseDTO> UpdateMemberAsync(long userId, long tripId, TripMemberUpdateDTO tripMemberUpdateDTO)
     {
         var getTripMember = await _tripMemberRepository.GetTripMemberAsync(userId, tripId);
         if (getTripMember == null)

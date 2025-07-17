@@ -13,6 +13,14 @@ public class FriendshipRepository(TravelBuddyContext _travelBuddyContext)
                 .Include(u => u.Friend)
                 .ToListAsync();
     }
+
+    public async Task<Friendship?> GetFriendAsync(long userId, long friendId)
+    {
+        return await _travelBuddyContext.Friendships
+                .Where(f => f.UserId == userId && f.FriendId == friendId)
+                .Include(f => f.Friend)
+                .FirstOrDefaultAsync();
+    }
     
     public async Task<IEnumerable<Friendship>> GetFriendsByFrindshipStatusAsync(long userId)
     {

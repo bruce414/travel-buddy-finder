@@ -11,7 +11,7 @@ using TravelBuddyApi.Services.Interfaces;
 
 [ApiController]
 [Route("[controller]")]
-public class TripMemberController(TripMemberService _tripMemberService) : ControllerBase
+public class TripMemberController(ITripMemberService _tripMemberService) : ControllerBase
 {
     //Get All TripMember from a selected Trip
     [HttpGet("{tripId}")]
@@ -153,7 +153,7 @@ public class TripMemberController(TripMemberService _tripMemberService) : Contro
 
         try
         {
-            var updatedTripMember = await _tripMemberService.UpdateTripMemberAsync(userId, tripId, tripMemberUpdateDTO);
+            var updatedTripMember = await _tripMemberService.UpdateMemberAsync(userId, tripId, tripMemberUpdateDTO);
             if (updatedTripMember == null)
             {
                 return NotFound();

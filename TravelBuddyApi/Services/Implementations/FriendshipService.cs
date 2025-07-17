@@ -6,6 +6,34 @@ namespace TravelBuddyApi.Services.Implementations;
 
 public class FriendshipService(IFriendshipRepository _friendshipRepository, IUserRepository _userRepository)
 {
+    public async Task<FriendshipResponseDTO> GetFriendAsync(long userId, long friendId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        var friend = await _userRepository.GetUserByIdAsync(friendId);
+        if (user == null)
+        {
+            throw new InvalidOperationException("This user does not exist");
+        }
+        if (friend == null)
+        {
+            throw new InvalidOperationException("This friend instance does not exist");
+        }
+
+        var getFriend = await _friendshipRepository.GetFriendAsync(userId, friendId);
+        if (getFriend == null)
+        {
+            throw new InvalidOperationException("The friend does not exist");
+        }
+
+        return new FriendshipResponseDTO
+        {
+            UserId = getFriend.UserId,
+            FriendId = getFriend.FriendId,
+            RequestedAt = getFriend.RequestedAt,
+            FriendshipStatus = getFriend.FriendshipStatus
+        };
+    }
+
     public async Task<IEnumerable<FriendshipResponseDTO>> GetFriendsByUserId(long userId)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
@@ -72,7 +100,7 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         return result;
     }
 
-    public async Task SendFriendRequestAsync(long fromUserId, long toUserId)
+    public async Task<FriendshipResponseDTO> SendFriendRequestAsync(long fromUserId, long toUserId)
     {
         var getCurrentUser = await _userRepository.GetUserByIdAsync(fromUserId);
         var getTargetUser = await _userRepository.GetUserByIdAsync(toUserId);
@@ -96,9 +124,18 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         };
 
         await _friendshipRepository.AddFriendRequestAsync(newFriendship);
+
+        return new FriendshipResponseDTO
+        {
+            UserId = newFriendship.UserId,
+            FriendId = newFriendship.FriendId,
+            RequestedAt = newFriendship.RequestedAt,
+            BecameAt = newFriendship.BecameAt,
+            FriendshipStatus = newFriendship.FriendshipStatus
+        };
     }
 
-    public async Task AcceptFriendRequestAsync(long userId, long requesterId)
+    public async Task<FriendshipResponseDTO> AcceptFriendRequestAsync(long userId, long requesterId)
     {
         var getCurrentUser = await _userRepository.GetUserByIdAsync(userId);
         var getRequester = await _userRepository.GetUserByIdAsync(requesterId);
@@ -119,9 +156,17 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         getFriendship.FriendshipStatus = FriendshipStatus.Accepted;
         getFriendship.BecameAt = DateTime.Now;
         await _friendshipRepository.UpdateFriendshipAsync(getFriendship);
+
+        return new FriendshipResponseDTO
+        {
+            UserId = getFriendship.UserId,
+            FriendId = getFriendship.FriendId,
+            BecameAt = getFriendship.BecameAt,
+            FriendshipStatus = getFriendship.FriendshipStatus
+        };
     }
 
-    public async Task RejectFriendRequestAsync(long userId, long requesterId)
+    public async Task<FriendshipResponseDTO> RejectFriendRequestAsync(long userId, long requesterId)
     {
         var getCurrentUser = await _userRepository.GetUserByIdAsync(userId);
         var getRequester = await _userRepository.GetUserByIdAsync(requesterId);
@@ -142,9 +187,16 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         getFriendship.FriendshipStatus = FriendshipStatus.Declined;
         getFriendship.BecameAt = DateTime.Now;
         await _friendshipRepository.UpdateFriendshipAsync(getFriendship);
+
+        return new FriendshipResponseDTO
+        {
+            UserId = getFriendship.UserId,
+            FriendId = getFriendship.FriendId,
+            FriendshipStatus = getFriendship.FriendshipStatus
+        };
     }
 
-    public async Task RemoveFriendAsync(long userId, long friendId)
+    public async Task<bool> RemoveFriendAsync(long userId, long friendId)
     {
         var getCurrentUser = await _userRepository.GetUserByIdAsync(userId);
         var getFriend = await _userRepository.GetUserByIdAsync(friendId);
@@ -164,6 +216,7 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         }
         getFriendship.FriendshipStatus = FriendshipStatus.Declined;
         await _friendshipRepository.RemoveFriendAsync(getFriendship);
+        return true;
     }
 
     public async Task<string> getFriendshipStatus(long userId, long targetUserId)
