@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic;
 using TravelBuddyApi.DTOs;
 using TravelBuddyApi.Models;
 using TravelBuddyApi.Repositories.Concrete;
@@ -6,29 +7,7 @@ namespace TravelBuddyApi.Services.Implementations;
 
 public class MessageService(MessageRepository _messageRepository, UserRepository _userRepository)
 {
-    public async Task AddMessageAsync(long senderId, MessageCreateDTO messageCreateDTO)
-    {
-        var getSender = await _userRepository.GetUserByIdAsync(senderId);
-        var getReceiver = await _userRepository.GetUserByIdAsync(messageCreateDTO.ReceiverId);
-        if (getSender == null || getReceiver == null)
-        {
-            throw new InvalidOperationException("The requested user is not found");
-        }
-
-        Message newMessage = new Message
-        {
-            SenderId = senderId,
-            Sender = getSender,
-            ReceiverId = messageCreateDTO.ReceiverId,
-            Receiver = getReceiver,
-            SentAt = DateTime.Now,
-            IsRead = false
-        };
-
-        await _messageRepository.AddMessageAsync(newMessage);
-    }
-
-    public async Task RemoveMessageAsync(long userId, long messageId)
+    public async Task<bool> RemoveMessageAsync(long userId, long messageId)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
         var getMessage = await _messageRepository.GetMessageById(messageId);
@@ -48,6 +27,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
         }
 
         await _messageRepository.RemoveMessageAsync(getMessage);
+        return true;
     }
 
     public async Task<IEnumerable<User>> GetRecentContactsAsync(long userId)
@@ -62,7 +42,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
         return await _messageRepository.GetRecentContactsAsync(userId);
     }
 
-    public async Task<long> GetUnreadMessageCounts(long userId)
+    public async Task<long?> GetUnreadMessageCounts(long userId)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
 
@@ -71,10 +51,11 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
             throw new InvalidOperationException("The requested user can't be found");
         }
 
-        return await _messageRepository.GetUnreadMessageCountAsync(userId);
+        var unreadCounts = await _messageRepository.GetUnreadMessageCountAsync(userId);
+        return unreadCounts;
     }
 
-    public async Task MarkMessageAsRead(long messageId)
+    public async Task<MessageResponseDTO> MarkMessageAsRead(long messageId)
     {
         var getMessage = await _messageRepository.GetMessageById(messageId);
         if (getMessage == null)
@@ -82,6 +63,16 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
             throw new InvalidOperationException("The requested message does not exist");
         }
         getMessage.IsRead = true;
+
+        return new MessageResponseDTO
+        {
+            MessageId = getMessage.MessageId,
+            MessageContent = getMessage.MessageContent,
+            SenderId = getMessage.SenderId,
+            ReceiverId = getMessage.ReceiverId,
+            SentAt = getMessage.SentAt,
+            IsRead = getMessage.IsRead
+        };
     }
 
     public async Task<IEnumerable<MessageResponseDTO>> GetMessagesBetweenUsers(long senderId, long receiverId)
@@ -107,7 +98,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
         return result;
     }
 
-    public async Task SendMessageAsync(MessageCreateDTO messageCreateDTO)
+    public async Task<MessageResponseDTO> SendMessageAsync(MessageCreateDTO messageCreateDTO)
     {
         var getSender = await _userRepository.GetUserByIdAsync(messageCreateDTO.SenderId);
         var getReceiver = await _userRepository.GetUserByIdAsync(messageCreateDTO.ReceiverId);
@@ -129,9 +120,52 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
             IsRead = false
         };
         await _messageRepository.AddMessageAsync(newMessage);
+
+        return new MessageResponseDTO
+        {
+            MessageId = newMessage.MessageId,
+            MessageContent = newMessage.MessageContent,
+            SenderId = newMessage.SenderId,
+            ReceiverId = newMessage.ReceiverId,
+            SentAt = newMessage.SentAt,
+            IsRead = newMessage.IsRead
+        };
     }
 
-    public async Task<MessageResponseDTO> GetMessageById(long messageId)
+    public async Task<MessageResponseDTO> UpdateMessageAsync(MessageUpdateDTO messageUpdateDTO)
+    {
+        var getMessage = await _messageRepository.GetMessageById(messageUpdateDTO.MessageId);
+        if (getMessage == null)
+        {
+            throw new InvalidOperationException("The message does not exist");
+        }
+
+        getMessage.MessageContent = messageUpdateDTO.MessageContent;
+
+        Message updatedMessage = new Message
+        {
+            MessageId = getMessage.MessageId,
+            MessageContent = getMessage.MessageContent,
+            SenderId = getMessage.SenderId,
+            ReceiverId = getMessage.ReceiverId,
+            SentAt = getMessage.SentAt,
+            IsRead = getMessage.IsRead
+        };
+
+        await _messageRepository.UpdateMessageAsync(updatedMessage);
+
+        return new MessageResponseDTO
+        {
+            MessageId = updatedMessage.MessageId,
+            MessageContent = updatedMessage.MessageContent,
+            SenderId = updatedMessage.SenderId,
+            ReceiverId = updatedMessage.ReceiverId,
+            SentAt = getMessage.SentAt,
+            IsRead = getMessage.IsRead
+        };
+    }
+
+    public async Task<MessageResponseDTO> GetMessageByIdAsync(long messageId)
     {
         var getMessage = await _messageRepository.GetMessageById(messageId);
         if (getMessage == null)
