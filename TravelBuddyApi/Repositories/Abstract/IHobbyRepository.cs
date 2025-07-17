@@ -9,5 +9,6 @@ public interface IHobbyRepository
     Task AddHobbyAsync(Hobby hobby);
     Task UpdateHobbyAsync(Hobby hobby);
     Task RemoveHobbyAsync(Hobby hobby);
-    Task<Hobby> GetUserHobbiesAsync(long userId);
+    Task<IEnumerable<Hobby>> GetUserHobbiesAsync(long userId);
+    Task<Hobby> GetUserHobbyAsync(long userId, long hobbyId);
 }

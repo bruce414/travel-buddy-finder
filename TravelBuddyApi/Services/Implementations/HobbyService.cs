@@ -34,7 +34,29 @@ public class HobbyService(HobbyRepository _hobbyRepository, UserRepository _user
         return result;
     }
 
-    public async Task AddHobbyToUserAsync(long userId, HobbyCreateDTO hobbyCreateDTO)
+    public async Task<HobbyResponseDTO> GetUserHobbyAsync(long userId, long hobbyId)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyId);
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+        if (getHobby == null)
+        {
+            throw new InvalidOperationException("The hobby is not found");
+        }
+
+        await _hobbyRepository.GetUserHobbyAsync(userId, hobbyId);
+
+        return new HobbyResponseDTO
+        {
+            HobbyId = getHobby.HobbyId,
+            Description = getHobby.Description
+        };
+    }
+
+    public async Task<HobbyResponseDTO> AddHobbyToUserAsync(long userId, HobbyCreateDTO hobbyCreateDTO)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
         var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyCreateDTO.HobbyId);
@@ -53,9 +75,15 @@ public class HobbyService(HobbyRepository _hobbyRepository, UserRepository _user
             Description = hobbyCreateDTO.Description
         };
         await _hobbyRepository.AddHobbyAsync(addHobby);
+
+        return new HobbyResponseDTO
+        {
+            HobbyId = addHobby.HobbyId,
+            Description = addHobby.Description
+        };
     }
 
-    public async Task RemoveHobbyFromUserAsync(long userId, long hobbyId)
+    public async Task<bool> RemoveHobbyFromUserAsync(long userId, long hobbyId)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
         var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyId);
@@ -69,5 +97,6 @@ public class HobbyService(HobbyRepository _hobbyRepository, UserRepository _user
         }
 
         await _hobbyRepository.RemoveHobbyAsync(getHobby);
+        return true;
     }
 }

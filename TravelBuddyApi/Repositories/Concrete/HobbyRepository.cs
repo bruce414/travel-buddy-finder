@@ -43,4 +43,12 @@ public class HobbyRepository(TravelBuddyContext _travelBuddyContext)
                 .SelectMany(u => u.Hobbies)
                 .ToListAsync();
     }
+
+    public async Task<Hobby?> GetUserHobbyAsync(long userId, long hobbyId)
+    {
+        return await _travelBuddyContext.Users
+                .Where(u => u.UserId == userId)
+                .SelectMany(u => u.Hobbies)
+                .FirstOrDefaultAsync(h => h.HobbyId == hobbyId);
+    }
 }
