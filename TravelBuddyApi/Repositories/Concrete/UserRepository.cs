@@ -6,8 +6,16 @@ using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
 using TravelBuddyApi.Repositories.Abstract;
 
-public class UserRepository(TravelBuddyContext _travelBuddyContext)
+
+public class UserRepository : IUserRepository
 {
+    private readonly TravelBuddyContext _travelBuddyContext;
+
+    public UserRepository(TravelBuddyContext travelBuddyContext)
+    {
+        _travelBuddyContext = travelBuddyContext;
+    }
+
     public async Task<List<User>> GetAllUsersAsync()
     {
         return await _travelBuddyContext.Users.ToListAsync();
@@ -46,7 +54,7 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
         return await _travelBuddyContext.Users.AnyAsync(u => u.UserId == id);
     }
 
-    public async Task<List<User>> SortUsersByName()
+    public async Task<IEnumerable<User>> SortUsersByNameAsync()
     {
         List<User> users = await _travelBuddyContext.Users.ToListAsync();
         users.Sort((a, b) => string.Concat(a.FirstName, " ", a.LastName)
@@ -54,7 +62,7 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
         return users;
     }
 
-    public async Task<IEnumerable<User>> GetUsersbyHobbyIdsAsync(IEnumerable<long> hobbyIds)
+    public async Task<IEnumerable<User>> GetUsersByHobbyIdsAsync(IEnumerable<long> hobbyIds)
     {
         return await _travelBuddyContext.Users
                 .Where(u => u.Hobbies.Any(h => hobbyIds.Contains(h.HobbyId)))
@@ -63,7 +71,7 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
     }
 
     /*The following three mathods serve MatchMakingService.cs*/
-    public async Task<User?> GetUserWithHobbies(long userId)
+    public async Task<User?> GetUsersWithHobbiesAsync(long userId)
     {
         return await _travelBuddyContext.Users
                 .Where(u => u.UserId == userId)
@@ -71,7 +79,7 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
                 .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<long>> GetUserHobbyIds(long userId)
+    public async Task<IEnumerable<long>> GetUserHobbyIdsAsync(long userId)
     {
         return await _travelBuddyContext.Users
                 .Where(u => u.UserId == userId)
@@ -79,7 +87,7 @@ public class UserRepository(TravelBuddyContext _travelBuddyContext)
                 .ToListAsync();
     }
 
-    public async Task<IEnumerable<User>> GetAllOtherUsersWithAtLeastOneSameHobby(long userId)
+    public async Task<IEnumerable<User>> GetAllOtherUsersWithAtLeastOneSameHobbyAsync(long userId)
     {
         return await _travelBuddyContext.Users
                 .Where(otu => otu.UserId != userId && otu.Hobbies

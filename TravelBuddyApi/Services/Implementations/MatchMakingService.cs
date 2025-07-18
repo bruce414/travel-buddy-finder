@@ -2,27 +2,37 @@ namespace TravelBuddyApi.Services.Implementations;
 
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
-using TravelBuddyApi.Repositories.Concrete;
+using TravelBuddyApi.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
+using TravelBuddyApi.Services.Interfaces;
 
 //Can be simplified
-public class MatchMakingService(UserRepository _userRepository, TripMemberRepository _tripMemberRepository)
+public class MatchMakingService : IMatchMakingService
 {
+    private readonly IUserRepository _userRepository;
+    private readonly ITripMemberRepository _tripMemberRepository;
+
+    public MatchMakingService(IUserRepository userRepository, ITripMemberRepository tripMemberRepository)
+    {
+        _userRepository = userRepository;
+        _tripMemberRepository = tripMemberRepository;
+    }
+
     public async Task<IEnumerable<MatchMaking>> GetUsersByRecommendationAsync(long userId)
     {
         //Default filtering factor is hobbies
-        User? currentUser = await _userRepository.GetUserWithHobbies(userId);
+        User? currentUser = await _userRepository.GetUsersWithHobbiesAsync(userId);
 
         if (currentUser == null)
         {
             return [];
         }
 
-        var currentUserHobbyIds = await _userRepository.GetUserHobbyIds(userId);
+        var currentUserHobbyIds = await _userRepository.GetUserHobbyIdsAsync(userId);
 
-        var retrieveCurrentUserAllTrips = await _tripMemberRepository.GetTripsByUserIdAsync(userId);
+        var retrieveCurrentUserAllTrips = await _tripMemberRepository.GetAllJoinedTripsByUserIdAsync(userId);
 
-        IEnumerable<User?> otherUsers = await _userRepository.GetAllOtherUsersWithAtLeastOneSameHobby(userId);
+        IEnumerable<User?> otherUsers = await _userRepository.GetAllOtherUsersWithAtLeastOneSameHobbyAsync(userId);
 
         if (otherUsers == Enumerable.Empty<User>())
         {

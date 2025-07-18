@@ -15,16 +15,16 @@ public class TripMemberController(ITripMemberService _tripMemberService) : Contr
 {
     //Get All TripMember from a selected Trip
     [HttpGet("{tripId}")]
-    public async Task<IActionResult> GetAllTripMemberAsync(long tripId)
+    public async Task<IActionResult> GetTripMembersAsync(long tripId)
     {
         try
         {
-            var getTripMember = await _tripMemberService.GetTripMembersAsync(tripId);
-            if (getTripMember == null)
+            var getTripMembers = await _tripMemberService.GetTripMembersAsync(tripId);
+            if (getTripMembers == null)
             {
                 return NotFound();
             }
-            return Ok(getTripMember);
+            return Ok(getTripMembers);
         }
         catch (Exception)
         {

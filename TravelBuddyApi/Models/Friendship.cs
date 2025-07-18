@@ -13,6 +13,7 @@ public class Friendship
     public User User { get; set; } = null!;
 
     //FK
+    //This is the one that is being requested OR already friend with the user
     public long FriendId { get; set; }
     //Navigation property
     public User Friend { get; set; } = null!;

@@ -6,16 +6,24 @@ using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
 using TravelBuddyApi.Repositories.Abstract;
 
-public class TripRepository(TravelBuddyContext _travelBuddyContext)
+
+public class TripRepository : ITripRepository
 {
+    private readonly TravelBuddyContext _travelBuddyContext;
+
+    public TripRepository(TravelBuddyContext travelBuddyContext)
+    {
+        _travelBuddyContext = travelBuddyContext;
+    }
+
     public async Task<List<Trip>> GetAllTripsAsync()
     {
         return await _travelBuddyContext.Trips.ToListAsync();
     }
 
-    public async Task<Trip?> GetTripByIdAsync(long id)
+    public async Task<Trip?> GetTripByIdAsync(long tripId)
     {
-        return await _travelBuddyContext.Trips.FindAsync(id);
+        return await _travelBuddyContext.Trips.FindAsync(tripId);
     }
 
     //Filtering trips based on users selections for ***search query***
@@ -105,7 +113,7 @@ public class TripRepository(TravelBuddyContext _travelBuddyContext)
         }
     }
 
-    public async Task<int> CurrentNumberOfMembers(int tripId)
+    public async Task<int> CurrentNumberOfMembersAsync(int tripId)
     {
         Trip? trip = await _travelBuddyContext.Trips.Include(t => t.Members).FirstOrDefaultAsync(tr => tr.TripId == tripId);
         int memberCount = trip?.Members.Count ?? 0;

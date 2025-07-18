@@ -1,11 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 
 namespace TravelBuddyApi.Repositories.Concrete;
 
-public class HobbyRepository(TravelBuddyContext _travelBuddyContext)
+public class HobbyRepository : IHobbyRepository
 {
+    private readonly TravelBuddyContext _travelBuddyContext;
+
+    public HobbyRepository(TravelBuddyContext travelBuddyContext)
+    {
+        _travelBuddyContext = travelBuddyContext;
+    }
+
     public async Task<IEnumerable<Hobby>> GetAllHobbiesAsync()
     {
         return await _travelBuddyContext.Hobbies.ToListAsync();

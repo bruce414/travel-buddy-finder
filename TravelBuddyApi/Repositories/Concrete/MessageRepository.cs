@@ -1,17 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 
 namespace TravelBuddyApi.Repositories.Concrete;
 
-public class MessageRepository(TravelBuddyContext _travelBuddyContext)
+public class MessageRepository : IMessageRepository
 {
-    public async Task<List<Message>> GetAllMessagesAsync()
+    private readonly TravelBuddyContext _travelBuddyContext;
+
+    public MessageRepository(TravelBuddyContext travelBuddyContext)
+    {
+        _travelBuddyContext = travelBuddyContext;
+    }
+
+    public async Task<IEnumerable<Message>> GetAllMessagesAsync()
     {
         return await _travelBuddyContext.Messages.ToListAsync();
     }
 
-    public async Task<Message?> GetMessageById(long messageId)
+    public async Task<Message?> GetMessageByIdAsync(long messageId)
     {
         return await _travelBuddyContext.Messages.FindAsync(messageId);
     }
@@ -41,7 +49,6 @@ public class MessageRepository(TravelBuddyContext _travelBuddyContext)
         return await _travelBuddyContext.Users
                 .Where(u => recentContactIds.Contains(u.UserId))
                 .ToListAsync();
-                
     }
 
     public async Task<long> GetUnreadMessageCountAsync(long userId)
@@ -59,13 +66,6 @@ public class MessageRepository(TravelBuddyContext _travelBuddyContext)
                 .ToListAsync();
     }
 
-    public async Task<int> GetReadMessageCountAsync(long userId)
-    {
-        return await _travelBuddyContext.Messages
-                .Where(m => m.ReceiverId == userId && m.IsRead == true)
-                .CountAsync();
-    }
-
     public async Task AddMessageAsync(Message message)
     {
         _travelBuddyContext.Messages.Add(message);
@@ -78,9 +78,10 @@ public class MessageRepository(TravelBuddyContext _travelBuddyContext)
         await _travelBuddyContext.SaveChangesAsync();
     }
 
-    public async Task RemoveMessageAsync(Message message)
+    public async Task RemoveMessageAsync(long messageId)
     {
-        _travelBuddyContext.Messages.Remove(message);
+        var getMessage = await _travelBuddyContext.Messages.FindAsync(messageId);
+        _travelBuddyContext.Messages.Remove(getMessage!);
         await _travelBuddyContext.SaveChangesAsync();
     }
 }

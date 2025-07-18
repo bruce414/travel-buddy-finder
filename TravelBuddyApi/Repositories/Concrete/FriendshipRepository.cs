@@ -1,11 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Contexts;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 
 namespace TravelBuddyApi.Repositories.Concrete;
 
-public class FriendshipRepository(TravelBuddyContext _travelBuddyContext)
+public class FriendshipRepository : IFriendshipRepository
 {
+    private readonly TravelBuddyContext _travelBuddyContext;
+
+    public FriendshipRepository(TravelBuddyContext travelBuddyContext)
+    {
+        _travelBuddyContext = travelBuddyContext;
+    }
+
     public async Task<IEnumerable<Friendship>> GetFriendsByUserIdAsync(long userId)
     {
         return await _travelBuddyContext.Friendships
@@ -20,14 +28,6 @@ public class FriendshipRepository(TravelBuddyContext _travelBuddyContext)
                 .Where(f => f.UserId == userId && f.FriendId == friendId)
                 .Include(f => f.Friend)
                 .FirstOrDefaultAsync();
-    }
-    
-    public async Task<IEnumerable<Friendship>> GetFriendsByFrindshipStatusAsync(long userId)
-    {
-        return await _travelBuddyContext.Friendships
-                .Where(f => f.UserId == userId && f.FriendshipStatus == FriendshipStatus.Pending)
-                .Include(f => f.Friend)
-                .ToListAsync();
     }
 
     //Logic: I am the one who is sending the friend requests, therefore, DB needs to look for all rows in Friendships 

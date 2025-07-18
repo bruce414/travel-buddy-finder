@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TravelBuddyApi.Contexts;
+using TravelBuddyApi.Repositories.Abstract;
+using TravelBuddyApi.Repositories.Concrete;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,14 @@ builder.Services.AddDbContext<TravelBuddyContext>(options =>
 builder.Services.AddDbContext<TravelBuddyContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 */
+
+//Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITripRepository, TripRepository>();
+builder.Services.AddScoped<ITripMemberRepository, TripMemberRepository>();
+builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IHobbyRepository, HobbyRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
