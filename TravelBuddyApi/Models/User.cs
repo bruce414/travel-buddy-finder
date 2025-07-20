@@ -42,6 +42,8 @@ public class User
 
     public string? ProfileImageUrl { get; set; }
 
+    public DateTime JoinedAt { get; set; }
+
     //Specify the time that the user has created his profile at
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
