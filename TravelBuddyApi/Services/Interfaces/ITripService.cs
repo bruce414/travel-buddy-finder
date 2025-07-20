@@ -8,7 +8,7 @@ public interface ITripService
     public Task<IEnumerable<TripResponseDTO>> GetAllTripsAsync();
     public Task<TripResponseDTO> GetTripById(long tripId);
     public Task<IEnumerable<TripResponseDTO>> GetFilteredTripsAsync(TripFilter tripFilter);
-    public Task<TripResponseDTO> CreateTripsAsync(long userId, TripCreateDTO tripDTO);
+    public Task<TripResponseDTO> CreateTripAsync(long userId, TripCreateDTO tripDTO);
     public Task<TripResponseDTO> UpdateTripAsync(long userId, long tripId, TripUpdateDTO tripDTO);
     public Task<bool> DeleteTripAsync(long userId, long tripid);
     public Task<IEnumerable<TripResponseDTO>> GetUserAllUpcomingTripsAsync(long userId);

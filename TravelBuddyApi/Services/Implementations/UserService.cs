@@ -5,9 +5,16 @@ using TravelBuddyApi.Services.Interfaces;
 
 namespace TravelBuddyApi.Services.Implementations;
 
-public class UserService(IUserRepository _userRepository)
+public class UserService : IUserService
 {
-    public async Task<IEnumerable<UserResponseDTO>> GetAllUsers()
+    private readonly IUserRepository _userRepository;
+
+    public UserService(IUserRepository userRepositoy)
+    {
+        _userRepository = userRepositoy;
+    }
+
+    public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
     {
         var getUsers = await _userRepository.GetAllUsersAsync();
 
@@ -125,7 +132,7 @@ public class UserService(IUserRepository _userRepository)
 
     public async Task<UserResponseDTO> UpdateUserAsync(long userId, UserUpdateDTO userUpdateDTO)
     {
-        User getUser = await _userRepository.GetUserByIdAsync(userId);
+        User? getUser = await _userRepository.GetUserByIdAsync(userId);
         if (getUser == null)
         {
             throw new InvalidOperationException("The requested user does not exist");
@@ -162,7 +169,7 @@ public class UserService(IUserRepository _userRepository)
 
     public async Task<bool> RemoveUserAsync(long userId)
     {
-        User getUser = await _userRepository.GetUserByIdAsync(userId);
+        User? getUser = await _userRepository.GetUserByIdAsync(userId);
         if (getUser == null)
         {
             return false;

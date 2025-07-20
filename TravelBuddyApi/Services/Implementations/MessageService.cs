@@ -1,32 +1,33 @@
 using Microsoft.VisualBasic;
 using TravelBuddyApi.DTOs;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 using TravelBuddyApi.Repositories.Concrete;
+using TravelBuddyApi.Services.Interfaces;
 
 namespace TravelBuddyApi.Services.Implementations;
 
-public class MessageService(MessageRepository _messageRepository, UserRepository _userRepository)
+public class MessageService : IMessageService
 {
-    public async Task<bool> RemoveMessageAsync(long userId, long messageId)
-    {
-        var getUser = await _userRepository.GetUserByIdAsync(userId);
-        var getMessage = await _messageRepository.GetMessageById(messageId);
+    private readonly IMessageRepository _messageRepository;
+    private readonly IUserRepository _userRepository;
 
-        if (getUser == null)
-        {
-            throw new InvalidOperationException("The requested user can't be found");
-        }
+    public MessageService(IMessageRepository messageRepository, IUserRepository userRepository)
+    {
+        _messageRepository = messageRepository;
+        _userRepository = userRepository;
+    }
+
+    public async Task<bool> RemoveMessageAsync(long messageId)
+    {
+        var getMessage = await _messageRepository.GetMessageByIdAsync(messageId);
+
         if (getMessage == null)
         {
             throw new InvalidOperationException("The requested message does not exist");
         }
-        //Because we don't know is the userId the Sender's userId or Receiver's userId. If it's receiver's userId, receiver can't delete a message that's sent by sender.
-        if (getMessage.SenderId != userId)
-        {
-            throw new UnauthorizedAccessException("Cannot delete someone else's message");
-        }
 
-        await _messageRepository.RemoveMessageAsync(getMessage);
+        await _messageRepository.RemoveMessageAsync(messageId);
         return true;
     }
 
@@ -55,9 +56,9 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
         return unreadCounts;
     }
 
-    public async Task<MessageResponseDTO> MarkMessageAsRead(long messageId)
+    public async Task<MessageResponseDTO> MarkMessageAsReadAsync(long messageId)
     {
-        var getMessage = await _messageRepository.GetMessageById(messageId);
+        var getMessage = await _messageRepository.GetMessageByIdAsync(messageId);
         if (getMessage == null)
         {
             throw new InvalidOperationException("The requested message does not exist");
@@ -75,7 +76,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
         };
     }
 
-    public async Task<IEnumerable<MessageResponseDTO>> GetMessagesBetweenUsers(long senderId, long receiverId)
+    public async Task<IEnumerable<MessageResponseDTO>> GetMessagesBetweenUsersAsync(long senderId, long receiverId)
     {
         var getSender = await _userRepository.GetUserByIdAsync(senderId);
         var getReceiver = await _userRepository.GetUserByIdAsync(receiverId);
@@ -134,7 +135,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
 
     public async Task<MessageResponseDTO> UpdateMessageAsync(MessageUpdateDTO messageUpdateDTO)
     {
-        var getMessage = await _messageRepository.GetMessageById(messageUpdateDTO.MessageId);
+        var getMessage = await _messageRepository.GetMessageByIdAsync(messageUpdateDTO.MessageId);
         if (getMessage == null)
         {
             throw new InvalidOperationException("The message does not exist");
@@ -167,7 +168,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
 
     public async Task<MessageResponseDTO> GetMessageByIdAsync(long messageId)
     {
-        var getMessage = await _messageRepository.GetMessageById(messageId);
+        var getMessage = await _messageRepository.GetMessageByIdAsync(messageId);
         if (getMessage == null)
         {
             throw new InvalidOperationException("The message does not exist");
@@ -188,7 +189,7 @@ public class MessageService(MessageRepository _messageRepository, UserRepository
 
     public async Task<bool> MessageExistsAsync(long messageId)
     {
-        var getMessage = await _messageRepository.GetMessageById(messageId);
+        var getMessage = await _messageRepository.GetMessageByIdAsync(messageId);
         if (getMessage == null)
         {
             throw new InvalidOperationException("The message does not exist");

@@ -1,11 +1,24 @@
 using TravelBuddyApi.DTOs;
 using TravelBuddyApi.Models;
+using TravelBuddyApi.Repositories.Abstract;
 using TravelBuddyApi.Repositories.Concrete;
+using TravelBuddyApi.Services.Interfaces;
 
 namespace TravelBuddyApi.Services.Implementations;
 
-public class TripMemberService(UserRepository _userRepository, TripRepository _tripRepository, TripMemberRepository _tripMemberRepository)
+public class TripMemberService : ITripMemberService
 {
+    private readonly IUserRepository _userRepository;
+    private readonly ITripRepository _tripRepository;
+    private readonly ITripMemberRepository _tripMemberRepository;
+
+    public TripMemberService(IUserRepository userRepository, ITripRepository tripRepository, ITripMemberRepository tripMemberRepository)
+    {
+        _userRepository = userRepository;
+        _tripRepository = tripRepository;
+        _tripMemberRepository = tripMemberRepository;
+    }
+
     public async Task<TripMemberResponseDTO> AddMemberAsync(long userId, long tripId, TripMemberCreateDTO tripMemberCreateDTO)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
@@ -96,7 +109,7 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         {
             throw new InvalidOperationException("The requested trip does not exist");
         }
-        var member = await _tripMemberRepository.GetAllTripMembersAsync(tripId);
+        var member = await _tripMemberRepository.GetTripMembersAsync(tripId);
         var result = member.Select(m => new TripMemberResponseDTO
         {
             UserId = m.UserId,
@@ -121,12 +134,14 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         }
 
         bool isUserInTrip = await _tripMemberRepository.IsUserInTripAsync(userId, tripId);
-        if (!isUserInTrip) {
+        if (!isUserInTrip)
+        {
             throw new InvalidOperationException("The user is not in this trip");
         }
 
         var getTripMember = await _tripMemberRepository.GetTripMemberAsync(tripId, userId);
-        if (getTripMember == null) {
+        if (getTripMember == null)
+        {
             throw new InvalidOperationException("The user is not in this trip");
         }
         return new TripMemberResponseDTO
@@ -165,15 +180,15 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         var result = userJoinedUpcomingTrips.Select(u => new TripResponseDTO
         {
             TripId = u.TripId,
-            TripOrganizerId = u.TripOrganizerId,
-            Title = u.Title,
-            Destination = u.Destination,
-            StartDate = u.StartDate,
-            EndDate = u.EndDate,
-            AveragePricePerPerson = u.AveragePricePerPerson,
-            Description = u.Description,
-            TripImagesUrl = u.TripImagesUrl,
-            IsLookingForBuddies = u.IsLookingForBuddies
+            TripOrganizerId = u.Trip.TripOrganizerId,
+            Title = u.Trip.Title,
+            Destination = u.Trip.Destination,
+            StartDate = u.Trip.StartDate,
+            EndDate = u.Trip.EndDate,
+            AveragePricePerPerson = u.Trip.AveragePricePerPerson,
+            Description = u.Trip.Description,
+            TripImagesUrl = u.Trip.TripImagesUrl,
+            IsLookingForBuddies = u.Trip.IsLookingForBuddies
         });
         return result;
     }
@@ -189,15 +204,15 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         var result = userJoinedOngoingTrips.Select(u => new TripResponseDTO
         {
             TripId = u.TripId,
-            TripOrganizerId = u.TripOrganizerId,
-            Title = u.Title,
-            Destination = u.Destination,
-            StartDate = u.StartDate,
-            EndDate = u.EndDate,
-            AveragePricePerPerson = u.AveragePricePerPerson,
-            Description = u.Description,
-            TripImagesUrl = u.TripImagesUrl,
-            IsLookingForBuddies = u.IsLookingForBuddies
+            TripOrganizerId = u.Trip.TripOrganizerId,
+            Title = u.Trip.Title,
+            Destination = u.Trip.Destination,
+            StartDate = u.Trip.StartDate,
+            EndDate = u.Trip.EndDate,
+            AveragePricePerPerson = u.Trip.AveragePricePerPerson,
+            Description = u.Trip.Description,
+            TripImagesUrl = u.Trip.TripImagesUrl,
+            IsLookingForBuddies = u.Trip.IsLookingForBuddies
         });
         return result;
     }
@@ -213,16 +228,34 @@ public class TripMemberService(UserRepository _userRepository, TripRepository _t
         var result = userJoinedPastTrips.Select(u => new TripResponseDTO
         {
             TripId = u.TripId,
-            TripOrganizerId = u.TripOrganizerId,
-            Title = u.Title,
-            Destination = u.Destination,
-            StartDate = u.StartDate,
-            EndDate = u.EndDate,
-            AveragePricePerPerson = u.AveragePricePerPerson,
-            Description = u.Description,
-            TripImagesUrl = u.TripImagesUrl,
-            IsLookingForBuddies = u.IsLookingForBuddies
+            TripOrganizerId = u.Trip.TripOrganizerId,
+            Title = u.Trip.Title,
+            Destination = u.Trip.Destination,
+            StartDate = u.Trip.StartDate,
+            EndDate = u.Trip.EndDate,
+            AveragePricePerPerson = u.Trip.AveragePricePerPerson,
+            Description = u.Trip.Description,
+            TripImagesUrl = u.Trip.TripImagesUrl,
+            IsLookingForBuddies = u.Trip.IsLookingForBuddies
         });
         return result;
+    }
+
+    public async Task<bool> IsUserInTripAsync(long userId, long tripId)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        var getTrip = await _tripRepository.GetTripByIdAsync(tripId);
+
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+
+        if (getTrip == null)
+        {
+            throw new InvalidOperationException("The trip is not found");
+        }
+
+        return await _tripMemberRepository.IsUserInTripAsync(userId, tripId);
     }
 }

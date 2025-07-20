@@ -1,11 +1,21 @@
 using TravelBuddyApi.DTOs;
 using TravelBuddyApi.Models;
 using TravelBuddyApi.Repositories.Abstract;
+using TravelBuddyApi.Services.Interfaces;
 
 namespace TravelBuddyApi.Services.Implementations;
 
-public class FriendshipService(IFriendshipRepository _friendshipRepository, IUserRepository _userRepository)
+public class FriendshipService : IFriendshipService
 {
+    private readonly IFriendshipRepository _friendshipRepository;
+    private readonly IUserRepository _userRepository;
+
+    public FriendshipService(IFriendshipRepository friendshipRepository, IUserRepository userRepository)
+    {
+        _friendshipRepository = friendshipRepository;
+        _userRepository = userRepository;
+    }
+
     public async Task<FriendshipResponseDTO> GetFriendAsync(long userId, long friendId)
     {
         var user = await _userRepository.GetUserByIdAsync(userId);
@@ -34,7 +44,7 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         };
     }
 
-    public async Task<IEnumerable<FriendshipResponseDTO>> GetFriendsByUserId(long userId)
+    public async Task<IEnumerable<FriendshipResponseDTO>> GetFriendsByUserIdAsync(long userId)
     {
         var getUser = await _userRepository.GetUserByIdAsync(userId);
         if (getUser == null)
@@ -219,7 +229,7 @@ public class FriendshipService(IFriendshipRepository _friendshipRepository, IUse
         return true;
     }
 
-    public async Task<string> getFriendshipStatus(long userId, long targetUserId)
+    public async Task<string> GetFriendshipStatusAsync(long userId, long targetUserId)
     {
         var getCurrentUser = await _userRepository.GetUserByIdAsync(userId);
         var getTargetUser = await _userRepository.GetUserByIdAsync(targetUserId);

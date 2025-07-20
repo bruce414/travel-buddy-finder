@@ -2,14 +2,37 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using TravelBuddyApi.DTOs;
 using TravelBuddyApi.Models;
 using TravelBuddyApi.Repositories.Abstract;
+using TravelBuddyApi.Repositories.Concrete;
+using TravelBuddyApi.Services.Interfaces;
 
 namespace TravelBuddyApi.Services.Implementations;
 
-public class TripService(ITripRepository _tripRepository)
+public class TripService : ITripService
 {
-    public async Task<IEnumerable<Trip>> GetAllTripsAsync()
+    private readonly ITripRepository _tripRepository;
+
+    public TripService(ITripRepository tripRepository)
     {
-        return await _tripRepository.GetAllTripsAsync();
+        _tripRepository = tripRepository;
+    }
+
+    public async Task<IEnumerable<TripResponseDTO>> GetAllTripsAsync()
+    {
+        var getTrips = await _tripRepository.GetAllTripsAsync();
+
+        var result = getTrips.Select(t => new TripResponseDTO
+        {
+            TripId = t.TripId,
+            Title = t.Title,
+            Destination = t.Destination,
+            StartDate = t.StartDate,
+            EndDate = t.EndDate,
+            AveragePricePerPerson = t.AveragePricePerPerson,
+            Description = t.Description,
+            TripImagesUrl = t.TripImagesUrl,
+            IsLookingForBuddies = t.IsLookingForBuddies
+        });
+        return result;
     }
 
     public async Task<TripResponseDTO> GetTripById(long tripId)
@@ -18,7 +41,7 @@ public class TripService(ITripRepository _tripRepository)
 
         if (getTrip == null)
         {
-            throw new InvalidOperationException("The trip is not found"); 
+            throw new InvalidOperationException("The trip is not found");
         }
 
         TripResponseDTO trip = new TripResponseDTO
@@ -89,7 +112,7 @@ public class TripService(ITripRepository _tripRepository)
 
     public async Task<TripResponseDTO> UpdateTripAsync(long userId, long tripId, TripUpdateDTO tripUpdateDTO)
     {
-        Trip existingTrip = await _tripRepository.GetTripByIdAsync(tripId);
+        Trip? existingTrip = await _tripRepository.GetTripByIdAsync(tripId);
         if (existingTrip == null)
         {
             throw new InvalidOperationException("The requested trip does not exist");
@@ -128,7 +151,7 @@ public class TripService(ITripRepository _tripRepository)
 
     public async Task<bool> DeleteTripAsync(long userId, long tripId)
     {
-        Trip trip = await _tripRepository.GetTripByIdAsync(tripId);
+        Trip? trip = await _tripRepository.GetTripByIdAsync(tripId);
         if (trip == null)
         {
             throw new InvalidOperationException("The requested trip does not exist");
