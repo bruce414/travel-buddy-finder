@@ -65,7 +65,7 @@ public class MessageController(IMessageService _messageService) : ControllerBase
     {
         try
         {
-            var getMessages = await _messageService.GetMessageBetweenUser(senderId, receiverId);
+            var getMessages = await _messageService.GetMessagesBetweenUsersAsync(senderId, receiverId);
             if (getMessages == null)
             {
                 return NotFound();

@@ -172,7 +172,7 @@ public class TripController(ITripService _tripService) : ControllerBase
 
         try
         {
-            var createdTrip = await _tripService.CreateTripsAsync(userId, tripCreateDTO);
+            var createdTrip = await _tripService.CreateTripAsync(userId, tripCreateDTO);
             if (createdTrip == null)
             {
                 return NotFound();
