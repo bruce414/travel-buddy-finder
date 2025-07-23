@@ -17,7 +17,8 @@ out/
 
 ## ASP.NET
 appsettings.*.json
-!appsettings.json        # Keep the base one if needed
+appsettings.json
+# !appsettings.json        # Keep the base one if needed
 
 ## Environment variables
 .env

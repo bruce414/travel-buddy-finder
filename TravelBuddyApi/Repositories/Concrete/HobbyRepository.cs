@@ -26,37 +26,11 @@ public class HobbyRepository : IHobbyRepository
                 .FirstOrDefaultAsync();
     }
 
-    public async Task AddHobbyAsync(Hobby hobby)
-    {
-        _travelBuddyContext.Hobbies.Add(hobby);
-        await _travelBuddyContext.SaveChangesAsync();
-    }
-
-    public async Task UpdateHobbyAsync(Hobby hobby)
-    {
-        _travelBuddyContext.Hobbies.Update(hobby);
-        await _travelBuddyContext.SaveChangesAsync();
-    }
-
-    public async Task RemoveHobbyAsync(Hobby hobby)
-    {
-        _travelBuddyContext.Hobbies.Remove(hobby);
-        await _travelBuddyContext.SaveChangesAsync();
-    }
-
     public async Task<IEnumerable<Hobby>> GetUserHobbiesAsync(long userId)
     {
         return await _travelBuddyContext.Users
                 .Where(u => u.UserId == userId)
                 .SelectMany(u => u.Hobbies)
                 .ToListAsync();
-    }
-
-    public async Task<Hobby?> GetUserHobbyAsync(long userId, long hobbyId)
-    {
-        return await _travelBuddyContext.Users
-                .Where(u => u.UserId == userId)
-                .SelectMany(u => u.Hobbies)
-                .FirstOrDefaultAsync(h => h.HobbyId == hobbyId);
     }
 }

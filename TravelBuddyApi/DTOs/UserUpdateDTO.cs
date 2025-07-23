@@ -28,9 +28,6 @@ public class UserUpdateDTO
     [Required]
     public string EmailAddress { get; set; } = string.Empty;
 
-    [Required]
-    public string PasswordHash { get; set; } = string.Empty;
-
     [MaxLength(500)]
     public string ProfileInfo { get; set; } = string.Empty;
 

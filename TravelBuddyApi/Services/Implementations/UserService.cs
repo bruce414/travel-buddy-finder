@@ -8,10 +8,12 @@ namespace TravelBuddyApi.Services.Implementations;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IHobbyRepository _hobbyRepository;
 
-    public UserService(IUserRepository userRepositoy)
+    public UserService(IUserRepository userRepositoy, IHobbyRepository hobbyRepository)
     {
         _userRepository = userRepositoy;
+        _hobbyRepository = hobbyRepository;
     }
 
     public async Task<IEnumerable<UserResponseDTO>> GetAllUsersAsync()
@@ -28,7 +30,6 @@ public class UserService : IUserService
             Gender = au.Gender,
             Nationality = au.Nationality,
             EmailAddress = au.EmailAddress,
-            PasswordHash = au.PasswordHash,
             ProfileInfo = au.ProfileInfo,
             ProfileImageUrl = au.ProfileImageUrl
         });
@@ -53,7 +54,6 @@ public class UserService : IUserService
             Gender = u.Gender,
             Nationality = u.Nationality,
             EmailAddress = u.EmailAddress,
-            PasswordHash = u.PasswordHash,
             ProfileInfo = u.ProfileInfo,
             ProfileImageUrl = u.ProfileImageUrl,
             Hobbies = u.Hobbies.Select(h => new HobbyResponseDTO
@@ -84,7 +84,6 @@ public class UserService : IUserService
             Gender = getUser.Gender,
             Nationality = getUser.Nationality,
             EmailAddress = getUser.EmailAddress,
-            PasswordHash = getUser.PasswordHash,
             ProfileInfo = getUser.ProfileInfo,
             ProfileImageUrl = getUser.ProfileImageUrl,
             Hobbies = getUser.Hobbies.Select(h => new HobbyResponseDTO
@@ -100,7 +99,6 @@ public class UserService : IUserService
     {
         var newUser = new User
         {
-            UserId = userCreateDTO.UserId,
             FirstName = userCreateDTO.FirstName,
             LastName = userCreateDTO.LastName,
             UserName = userCreateDTO.UserName,
@@ -124,7 +122,6 @@ public class UserService : IUserService
             Gender = newUser.Gender,
             Nationality = newUser.Nationality,
             EmailAddress = newUser.EmailAddress,
-            PasswordHash = newUser.PasswordHash,
             ProfileInfo = newUser.ProfileInfo,
             ProfileImageUrl = newUser.ProfileImageUrl
         };
@@ -146,7 +143,6 @@ public class UserService : IUserService
         getUser.Gender = userUpdateDTO.Gender;
         getUser.Nationality = userUpdateDTO.Nationality;
         getUser.EmailAddress = userUpdateDTO.EmailAddress;
-        getUser.PasswordHash = userUpdateDTO.PasswordHash;
         getUser.ProfileInfo = userUpdateDTO.ProfileImageUrl;
         getUser.ProfileImageUrl = userUpdateDTO.ProfileImageUrl;
 
@@ -161,10 +157,22 @@ public class UserService : IUserService
             Gender = getUser.Gender,
             Nationality = getUser.Nationality,
             EmailAddress = getUser.EmailAddress,
-            PasswordHash = getUser.PasswordHash,
             ProfileInfo = getUser.ProfileInfo,
             ProfileImageUrl = getUser.ProfileImageUrl
         };
+    }
+
+    public async Task ChangePasswordAsync(long userId, PasswordUpdateDTO passwordUpdateDTO)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+
+        getUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordUpdateDTO.NewPassword);
+
+        await _userRepository.UpdateUserAsync(getUser);
     }
 
     public async Task<bool> RemoveUserAsync(long userId)
@@ -178,5 +186,61 @@ public class UserService : IUserService
         await _userRepository.RemoveUserAsync(userId);
 
         return true;
+    }
+
+    public async Task<bool> AddHobbyToUserAsync(long userId, long hobbyId)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyId);
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+        if (getHobby == null)
+        {
+            throw new InvalidOperationException("The hobby is not found");
+        }
+
+        await _userRepository.AddHobbyToUserAsync(userId, hobbyId);
+        return true;
+    }
+
+    public async Task<bool> RemoveHobbyFromUserAsync(long userId, long hobbyId)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyId);
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+        if (getHobby == null)
+        {
+            throw new InvalidOperationException("The hobby is not found");
+        }
+
+        await _userRepository.RemoveHobbyFromUserAsync(userId, hobbyId);
+        return true;
+    }
+
+    public async Task<HobbyResponseDTO> GetUserHobbyAsync(long userId, long hobbyId)
+    {
+        var getUser = await _userRepository.GetUserByIdAsync(userId);
+        var getHobby = await _hobbyRepository.GetHobbyByIdAsync(hobbyId);
+        if (getUser == null)
+        {
+            throw new InvalidOperationException("The user is not found");
+        }
+        if (getHobby == null)
+        {
+            throw new InvalidOperationException("The hobby is not found");
+        }
+
+        await _userRepository.GetUserHobbyAsync(userId, hobbyId);
+
+        return new HobbyResponseDTO
+        {
+            HobbyId = getHobby.HobbyId,
+            Description = getHobby.Description
+        };
     }
 }

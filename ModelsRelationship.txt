@@ -12,3 +12,6 @@ joined model behind the scene, so no joined model needs to be created explicitly
 
 4. Each user can send many messages, but each message can only belong to one user. Thus, the relationship from User to Message is one
 to many, the relationship from Message to User is many to one.
+
+Remember to add this line of code back to launchsetting.js
+"applicationUrl": "https://localhost:7284;http://localhost:5229",

@@ -12,6 +12,7 @@ using TravelBuddyApi.Services.Interfaces;
 public class UserController(IUserService _userService) : ControllerBase
 {
     //Get All action
+    [HttpGet("getusers")]
     public async Task<IActionResult> GetAllUsers()
     {
         try
@@ -24,11 +25,11 @@ public class UserController(IUserService _userService) : ControllerBase
             return StatusCode(
             StatusCodes.Status500InternalServerError,
             "An error occurred while updating the user.");
-        } 
+        }
     }
 
     //Get by Id action
-    [HttpGet("{id}")]
+    [HttpGet("{userId}")]
     public async Task<IActionResult> GetUserByIdAsync(long userId)
     {
         try
@@ -70,7 +71,7 @@ public class UserController(IUserService _userService) : ControllerBase
     }
 
     //Post: api/User
-    [HttpPost]
+    [HttpPost("adduser")]
     public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDTO userCreateDTO)
     {
         if (!ModelState.IsValid)
@@ -92,7 +93,7 @@ public class UserController(IUserService _userService) : ControllerBase
             return StatusCode(
             StatusCodes.Status500InternalServerError,
             "An error occurred while updating the user.");
-        } 
+        }
     }
 
     //Put: api/User/{id}
@@ -127,6 +128,51 @@ public class UserController(IUserService _userService) : ControllerBase
         }
     }
 
+    [HttpPut("{userId}/change-password")]
+    public async Task<IActionResult> ChangePasswordAsync(long userId, [FromBody] PasswordUpdateDTO passwordUpdateDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        try
+        {
+            await _userService.ChangePasswordAsync(userId, passwordUpdateDTO);
+            return Ok("Password has been updated successfully");
+        }
+        catch (InvalidOperationException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(
+            StatusCodes.Status500InternalServerError,
+            "An error occurred while updating the user."
+        );
+        }
+
+    }
+
+    [HttpGet("{userId}/{hobbyId}")]
+    public async Task<IActionResult> GetUserHobbyAsync(long userId, long hobbyId)
+    {
+        try
+        {
+            var getHobby = await _userService.GetUserHobbyAsync(userId, hobbyId);
+            if (getHobby == null)
+            {
+                return NotFound();
+            }
+            return Ok(getHobby);
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
+        }
+    }
+
     [HttpDelete("{userId}")]
     public async Task<IActionResult> RemoveUserAsync(long userId)
     {
@@ -146,6 +192,41 @@ public class UserController(IUserService _userService) : ControllerBase
             "An error occurred while updating the user."
         );
         }
-        
+    }
+
+    [HttpPost("{userId}/add/{hobbyId}")]
+    public async Task<IActionResult> AddHobbyToUserAsync(long userId, long hobbyId)
+    {
+        try
+        {
+            var addHobby = await _userService.AddHobbyToUserAsync(userId, hobbyId);
+            if (!addHobby)
+            {
+                return NotFound();
+            }
+            return CreatedAtAction(nameof(GetUserHobbyAsync), new { userId, hobbyId });
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
+        }
+    }
+
+    [HttpDelete("{userId}/delete/{hobbyId}")]
+    public async Task<IActionResult> RemoveHobbyFromUserAsync(long userId, long hobbyId)
+    {
+        try
+        {
+            var removeHobby = await _userService.RemoveHobbyFromUserAsync(userId, hobbyId);
+            if (!removeHobby)
+            {
+                return NotFound();
+            }
+            return Ok("The hobby has been removed successfully");
+        }
+        catch (Exception)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
+        }
     }
 }

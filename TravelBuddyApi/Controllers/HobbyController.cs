@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 public class HobbyController(IHobbyService _hobbyService) : ControllerBase
 {
     //Get all hobbies
-    [HttpGet]
+    [HttpGet("gethobby")]
     public async Task<IActionResult> GetAllHobbiesAsync()
     {
         try
@@ -46,57 +46,39 @@ public class HobbyController(IHobbyService _hobbyService) : ControllerBase
         }
     }
 
-    [HttpGet("{userId}/{hobbyId}")]
-    public async Task<IActionResult> GetUserHobbyAsync(long userId, long hobbyId)
-    {
-        try
-        {
-            var getHobby = await _hobbyService.GetUserHobbyAsync(userId, hobbyId);
-            if (getHobby == null)
-            {
-                return NotFound();
-            }
-            return Ok(getHobby);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
-        }
-    }
+    // [HttpPost("{userId}/add-hobby")]
+    // public async Task<IActionResult> UserAddHobbyAsync(long userId, [FromBody] HobbyCreateDTO hobbyCreateDTO)
+    // {
+    //     try
+    //     {
+    //         var addHobby = await _hobbyService.AddHobbyToUserAsync(userId, hobbyCreateDTO);
+    //         if (addHobby == null)
+    //         {
+    //             return NotFound();
+    //         }
+    //         return CreatedAtAction(nameof(GetUserHobbyAsync), new { userId, hobbyId = hobbyCreateDTO.HobbyId }, addHobby);
+    //     }
+    //     catch (Exception)
+    //     {
+    //         return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
+    //     }
+    // }
 
-    [HttpPost("{userId}/add-hobby")]
-    public async Task<IActionResult> UserAddHobbyAsync(long userId, [FromBody] HobbyCreateDTO hobbyCreateDTO)
-    {
-        try
-        {
-            var addHobby = await _hobbyService.AddHobbyToUserAsync(userId, hobbyCreateDTO);
-            if (addHobby == null)
-            {
-                return NotFound();
-            }
-            return CreatedAtAction(nameof(GetUserHobbyAsync), new { userId, hobbyId = hobbyCreateDTO.HobbyId }, addHobby);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
-        }
-    }
-
-    [HttpDelete("Remove-hobby/{hobbyId}/from/{userId}")]
-    public async Task<IActionResult> RemoveHobbyFromTheUserAsync(long userId, long hobbyId)
-    {
-        try
-        {
-            var didRemove = await _hobbyService.RemoveHobbyFromUserAsync(userId, hobbyId);
-            if (!didRemove)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
-        }
-    }
+    // [HttpDelete("Remove-hobby/{hobbyId}/from/{userId}")]
+    // public async Task<IActionResult> RemoveHobbyFromTheUserAsync(long userId, long hobbyId)
+    // {
+    //     try
+    //     {
+    //         var didRemove = await _hobbyService.RemoveHobbyFromUserAsync(userId, hobbyId);
+    //         if (!didRemove)
+    //         {
+    //             return NotFound();
+    //         }
+    //         return NoContent();
+    //     }
+    //     catch (Exception)
+    //     {
+    //         return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving the messages between the users.");
+    //     }
+    // }
 }

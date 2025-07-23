@@ -95,4 +95,58 @@ public class UserRepository : IUserRepository
                 .Include(otu => otu.Hobbies)
                 .ToListAsync();
     }
+
+    public async Task AddHobbyToUserAsync(long userId, long hobbyId)
+    {
+        var user = await _travelBuddyContext.Users
+                .Include(u => u.Hobbies)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            throw new ArgumentException("The user is not found");
+        }
+
+        var hobby = await _travelBuddyContext.Hobbies.FindAsync(hobbyId);
+        if (hobby == null)
+        {
+            throw new ArgumentException("The hobby is not found");
+        }
+
+        if (!user.Hobbies.Any(h => h.HobbyId == hobbyId))
+        {
+            user.Hobbies.Add(hobby);
+            await _travelBuddyContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task RemoveHobbyFromUserAsync(long userId, long hobbyId)
+    {
+        var user = await _travelBuddyContext.Users
+                .Include(u => u.Hobbies)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        if (user == null)
+        {
+            throw new ArgumentException("The user is not found");
+        }
+
+        var hobby = await _travelBuddyContext.Hobbies.FindAsync(hobbyId);
+        if (hobby == null)
+        {
+            throw new ArgumentException("The hobby is not found");
+        }
+
+        if (user.Hobbies.Any(h => h.HobbyId == hobbyId))
+        {
+            user.Hobbies.Remove(hobby);
+            await _travelBuddyContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<Hobby?> GetUserHobbyAsync(long userId, long hobbyId)
+    {
+        return await _travelBuddyContext.Users
+                .Where(u => u.UserId == userId)
+                .SelectMany(u => u.Hobbies)
+                .FirstOrDefaultAsync(h => h.HobbyId == hobbyId);
+    }
 }

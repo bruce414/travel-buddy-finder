@@ -2,6 +2,7 @@ namespace TravelBuddyApi.Contexts;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TravelBuddyApi.Data;
 using TravelBuddyApi.Models;
 
 public class TravelBuddyContext : DbContext
@@ -83,6 +84,8 @@ public class TravelBuddyContext : DbContext
 
         //No need to map between User and Hobby model, because when both have a navigation property pointing to each other
         //as ICollection<T>, EF core infers this as a many to many relationship
+
+        modelBuilder.Entity<Hobby>().HasData(HobbyData.HobbyArray());
     }
 
 }

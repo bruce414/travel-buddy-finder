@@ -4,7 +4,6 @@ namespace TravelBuddyApi.DTOs;
 
 public class UserCreateDTO
 {
-    public long UserId { get; set; }
     [Required(ErrorMessage = "User first name can't be null")]
     [MaxLength(100)]
     public string FirstName { get; set; } = string.Empty;

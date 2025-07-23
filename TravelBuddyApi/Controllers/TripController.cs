@@ -12,6 +12,7 @@ using TravelBuddyApi.Services.Interfaces;
 public class TripController(ITripService _tripService) : ControllerBase
 {
     //Get All Actions
+    [HttpGet("trips")]
     public async Task<IActionResult> GetAllTripsAsync()
     {
         try
@@ -162,7 +163,7 @@ public class TripController(ITripService _tripService) : ControllerBase
     }
 
     //Post: api/Trip
-    [HttpPost]
+    [HttpPost("addtrips")]
     public async Task<IActionResult> AddTripAsync(long userId, [FromBody] TripCreateDTO tripCreateDTO)
     {
         if (!ModelState.IsValid)

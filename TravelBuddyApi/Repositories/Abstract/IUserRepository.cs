@@ -16,4 +16,7 @@ public interface IUserRepository
     Task RemoveUserAsync(long id);
     Task<bool> UserExistsAsync(long id);
     Task<IEnumerable<User>> SortUsersByNameAsync();
+    Task AddHobbyToUserAsync(long userId, long hobbyId);
+    Task RemoveHobbyFromUserAsync(long userId, long hobbyId);
+    Task<Hobby?> GetUserHobbyAsync(long userId, long hobbyId);
 }

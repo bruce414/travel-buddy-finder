@@ -145,7 +145,6 @@ public class MessageService : IMessageService
 
         Message updatedMessage = new Message
         {
-            MessageId = getMessage.MessageId,
             MessageContent = getMessage.MessageContent,
             SenderId = getMessage.SenderId,
             ReceiverId = getMessage.ReceiverId,

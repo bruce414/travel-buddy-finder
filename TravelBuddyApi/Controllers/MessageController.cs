@@ -98,7 +98,7 @@ public class MessageController(IMessageService _messageService) : ControllerBase
     }
 
     //Send message / Add message
-    [HttpPost]
+    [HttpPost("message/send")]
     public async Task<IActionResult> SendMessageAsync([FromBody] MessageCreateDTO messageCreateDTO)
     {
         try
@@ -118,7 +118,7 @@ public class MessageController(IMessageService _messageService) : ControllerBase
         }
     }
 
-    [HttpPost]
+    [HttpPost("message/update")]
     public async Task<IActionResult> UpdateMessageAsync([FromBody] MessageUpdateDTO messageUpdateDTO)
     {
         try

@@ -98,7 +98,7 @@ public class FriendshipController(IFriendshipService _friendshipService) : Contr
     }
 
     //Send a friend request to somebody
-    [HttpPost]
+    [HttpPost("sendrequest")]
     public async Task<IActionResult> SendFriendRequestAsync([FromBody] FriendshipCreateRequestDTO friendshipCreateRequestDTO)
     {
         try
