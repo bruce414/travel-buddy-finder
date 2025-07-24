@@ -37,6 +37,15 @@ builder.Services.AddScoped<IHobbyService, HobbyService>();
 builder.Services.AddScoped<IMatchMakingService, MatchMakingService>();
 builder.Services.AddScoped<JwtTokenService>();
 
+//Add CORS service to allow my react frontend to call my backend api
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -97,6 +106,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 

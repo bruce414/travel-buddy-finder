@@ -43,7 +43,7 @@ public class TravelBuddyContext : DbContext
             .HasOne(tm => tm.User)
             .WithMany(t => t.TripCollections)
             .HasForeignKey(tm => tm.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade); 
 
         /*Conclusion:
           Self-referencing many-to-many and one-to-many relationships both require mapping from both sides, but only the many-to-many one needs a composite key.
