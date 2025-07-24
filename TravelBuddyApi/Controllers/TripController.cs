@@ -8,7 +8,7 @@ using TravelBuddyApi.Models;
 using TravelBuddyApi.Services.Interfaces;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TripController(ITripService _tripService) : ControllerBase
 {
     //Get All Actions

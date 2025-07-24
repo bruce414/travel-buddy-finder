@@ -10,7 +10,7 @@ using TravelBuddyApi.Services.Implementations;
 using TravelBuddyApi.Services.Interfaces;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TripMemberController(ITripMemberService _tripMemberService) : ControllerBase
 {
     //Get All TripMember from a selected Trip

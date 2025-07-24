@@ -10,7 +10,7 @@ using TravelBuddyApi.Services.Implementations;
 using TravelBuddyApi.Services.Interfaces;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class MessageController(IMessageService _messageService) : ControllerBase
 {
     //Get message by Id

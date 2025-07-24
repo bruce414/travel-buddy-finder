@@ -10,7 +10,7 @@ using TravelBuddyApi.Services.Implementations;
 using TravelBuddyApi.Services.Interfaces;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class FriendshipController(IFriendshipService _friendshipService) : ControllerBase
 {
     //Get all friends by UserId
