@@ -3,12 +3,12 @@ import React from 'react'
 const Navbar = () => {
   return (
     <>
-        <nav className='flex items-center'>
-            <div className='flex flex-[0.5] justify-center cursor-pointer text-2xl font-bold'>
+        <nav className='flex items-center justify-between px-20'>
+            <div className='cursor-pointer text-2xl font-bold'>
                 TravelBuddy<strong className='text-blue-500'>Finder</strong>
             </div>
             
-            <div className='pl-30 flex flex-1 justify-center items-center gap-25'>
+            <div className='pl-30 flex justify-center items-center gap-25'>
                 <ul className='flex list-none gap-5'>
                     <li className='cursor-pointer text-[19px]'><a>Home</a></li>
                     <li className='cursor-pointer text-[19px]'><a>Trips</a></li>
