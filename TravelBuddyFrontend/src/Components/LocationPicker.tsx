@@ -72,11 +72,11 @@ const LocationPicker = ({selected, onSelect} : LocationPickerProps): JSX.Element
                         ))}
                     </div>
 
-                    <button
+                    {/* <button
                         className="w-full mt-3 py-2 rounded-lg bg-gray-200 text-gray-600 font-medium hover:bg-gray-300"
                         onClick={() => setOpen(false)}>
                         Apply
-                    </button>
+                    </button> */}
                 </div>
             )}
         </div>
