@@ -7,14 +7,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 const HomePage = () => {
-//   const featureCardItem = [
-//     {id: 1, title: "Match & Chat", }
-//   ]
-
+ 
   return (
     <>
         <Navbar />
-
+        
         <div className='relative flex'>
             <div className='px-20 flex flex-[0.5] flex-col gap-8 text-start justify-center'>
                 <div className='gap-4'>
