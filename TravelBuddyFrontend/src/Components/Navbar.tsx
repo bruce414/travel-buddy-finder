@@ -1,9 +1,17 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  }
+
   return (
     <>
-        <nav className='flex items-center justify-between px-20'>
+        <nav className='pt-5 flex items-center justify-between px-20'>
             <div className='cursor-pointer text-2xl font-bold'>
                 TravelBuddy<strong className='text-blue-500'>Finder</strong>
             </div>
@@ -17,7 +25,10 @@ const Navbar = () => {
                     <li className='cursor-pointer text-[19px]'><a>Guides</a></li>
                 </ul>
 
-                <div className='bg-blue-500 text-white py-3 px-4 rounded-2xl cursor-pointer text-[18px]'>Login / Sign up</div>
+                <div onClick={handleLoginClick}
+                className='bg-blue-500 text-white py-3 px-4 rounded-2xl cursor-pointer text-[18px]'>
+                    Login / Sign up
+                </div>
             </div>
         </nav>
     </>

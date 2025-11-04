@@ -32,7 +32,8 @@ const LocationPicker = ({selected, onSelect} : LocationPickerProps): JSX.Element
 
   return (
     <>
-        <div className='relative'>
+        <div onClick={() => {if(open){setOpen(false)}}} 
+        className='relative'>
             <div onClick={() => setOpen(!open)}
             className='flex gap-3.5 items-center cursor-pointer'>
                 <div className='rounded-full bg-gray-200 p-2'>
@@ -52,7 +53,7 @@ const LocationPicker = ({selected, onSelect} : LocationPickerProps): JSX.Element
 
             {open && (
                 <div className='absolute top-18 left-0 z-20 bg-white rounded-2xl shadow-lg w-64 p-3'>
-                    <div className='flex items-center border-b pb-2 mb-2'>
+                    <div className='flex items-center border-b pb-2 mb-2 gap-3'>
                         <FontAwesomeIcon icon={faSearch} className='text-gray-400' />
                         <input type='text' placeholder='search' className='flex-1 text-sm outline-none' value={search}
                             onChange={(e) => setSearch(e.target.value)} />
